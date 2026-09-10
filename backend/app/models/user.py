@@ -40,3 +40,4 @@ class User(Base):
         DateTime,
         default=datetime.utcnow
     )
+

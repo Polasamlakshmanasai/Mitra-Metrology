@@ -17,3 +17,4 @@ class TokenResponse(BaseModel):
     token_type: str
     role: str
     user_id: int
+
