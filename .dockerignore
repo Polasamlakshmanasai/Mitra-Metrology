@@ -1,0 +1,15 @@
+# Ignore these from the Docker build context to keep the image small
+.git
+.gitignore
+.venv
+frontend/
+android/
+docs/
+scratch/
+*.md
+backend/venv/
+backend/mitra.db
+backend/uploads/
+**/__pycache__/
+**/*.pyc
+**/*.pyo

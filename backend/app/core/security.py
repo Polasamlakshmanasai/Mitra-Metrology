@@ -1,8 +1,11 @@
 from datetime import datetime, timedelta, timezone
 from jose import jwt
 import bcrypt
+import os
 
-SECRET_KEY = "MITRA_DEVELOPMENT_SECRET_CHANGE_LATER"
+# In production (Render), set SECRET_KEY as an environment variable.
+# Never commit a real secret to version control.
+SECRET_KEY = os.environ.get("SECRET_KEY", "MITRA_DEVELOPMENT_SECRET_CHANGE_LATER")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 

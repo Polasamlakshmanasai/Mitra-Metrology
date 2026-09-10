@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import Navbar from "../../components/Navbar";
 
-const API_BASE_URL = "http://localhost:8000";
+import API_BASE_URL from "../../config";
+
 
 function OfficerDashboard() {
   const [stats, setStats] = useState({
@@ -384,7 +385,7 @@ function OfficerDashboard() {
                   <div className="rounded-xl overflow-hidden bg-slate-950 border border-slate-800 p-2 flex justify-center">
                     {selectedInspection.evidence?.image_url ? (
                       <img
-                        src={`http://localhost:8000${selectedInspection.evidence.image_url}`}
+                        src={`${API_BASE_URL}${selectedInspection.evidence.image_url}`}
                         alt="Evidence"
                         className="max-h-64 object-contain rounded"
                       />

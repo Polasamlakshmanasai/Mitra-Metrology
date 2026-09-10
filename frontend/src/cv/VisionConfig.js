@@ -23,7 +23,8 @@ export const VisionConfig = {
   mode: "LOCAL",
 
   // Model backend details
-  cloudApiUrl: "http://localhost:8000/predict",
+  cloudApiUrl: `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/predict`,
+
 
   update(newConfig) {
     Object.assign(this, newConfig);

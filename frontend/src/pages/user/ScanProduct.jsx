@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../../components/Navbar";
 
-const API_BASE_URL = "http://localhost:8000";
+import API_BASE_URL from "../../config";
+
 
 const RULE_TITLES = {
   mrp: { label: "Maximum Retail Price (MRP)", rule: "Rule 6(1)(e)" },

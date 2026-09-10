@@ -3,7 +3,8 @@ import axios from "axios";
 import Navbar from "../../components/Navbar";
 import FSSAIChecklistReport from "./FSSAIChecklistReport";
 
-const API_BASE_URL = "http://localhost:8000";
+import API_BASE_URL from "../../config";
+
 
 // Pre-packaged Food Samples for Instant Demonstration
 const FOOD_SAMPLES = [

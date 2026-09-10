@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../../components/Navbar";
 
-const API_BASE_URL = "http://localhost:8000";
+import API_BASE_URL from "../../config";
+
 
 function ScanHistory() {
   const [scans, setScans] = useState([]);
@@ -217,7 +218,7 @@ function ScanHistory() {
               {selectedScan.evidence?.image_url && (
                 <div className="mb-5 rounded-xl overflow-hidden bg-slate-950 border border-slate-800 p-2 flex justify-center">
                   <img
-                    src={`http://localhost:8000${selectedScan.evidence.image_url}`}
+                    src={`${API_BASE_URL}${selectedScan.evidence.image_url}`}
                     alt="Package evidence"
                     className="max-h-56 object-contain rounded"
                   />
