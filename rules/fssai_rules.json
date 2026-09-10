@@ -1,0 +1,48 @@
+{
+  "jurisdiction": "India",
+  "framework": "Food Safety and Standards (Labelling and Display) Regulations, 2020",
+  "required_fields": [
+    "fssai",
+    "ingredients",
+    "veg_non_veg",
+    "nutritional_info"
+  ],
+  "rules": [
+    {
+      "id": "FSSAI_LICENSE",
+      "field": "fssai",
+      "title": "FSSAI Logo and 14-digit License Number",
+      "rule_citation": "Regulation 5(7)",
+      "required": true,
+      "severity": "high",
+      "description": "The FSSAI logo and 14-digit license number must be displayed prominently on the food package."
+    },
+    {
+      "id": "INGREDIENTS_LIST",
+      "field": "ingredients",
+      "title": "List of Ingredients",
+      "rule_citation": "Regulation 5(2)",
+      "required": true,
+      "severity": "high",
+      "description": "List of ingredients in descending order of ingoing weight/volume with INS numbers for additives."
+    },
+    {
+      "id": "VEG_NON_VEG_LOGO",
+      "field": "veg_non_veg",
+      "title": "Vegetarian / Non-Vegetarian Declaration",
+      "rule_citation": "Regulation 5(4)",
+      "required": true,
+      "severity": "high",
+      "description": "Green filled circle in green outline square for Veg, or brown triangle in brown outline square for Non-Veg."
+    },
+    {
+      "id": "NUTRITIONAL_INFORMATION",
+      "field": "nutritional_info",
+      "title": "Nutritional Information per 100g / serve",
+      "rule_citation": "Regulation 5(3)",
+      "required": true,
+      "severity": "high",
+      "description": "Mandatory declaration of Energy, Protein, Carbohydrates, Total Sugars, Added Sugars, Total Fat, Saturated Fat, Trans Fat, and Sodium."
+    }
+  ]
+}

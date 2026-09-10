@@ -1,0 +1,11 @@
+Nutrition_Facts_Table
+Ingredients_List
+Veg_Green_Dot
+NonVeg_Brown_Triangle
+FSSAI_License_Logo
+AGMARK_Seal
+Fortified_F_Logo
+Net_Quantity_MRP_Box
+Barcode_EAN13
+Batch_Date_Stamp
+Manufacturer_Address_Block

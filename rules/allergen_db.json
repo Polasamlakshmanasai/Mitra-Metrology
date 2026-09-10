@@ -1,0 +1,58 @@
+{
+  "allergens": [
+    {
+      "id": "GLUTEN",
+      "name": "Cereals containing Gluten",
+      "fssai_mandated": true,
+      "sources": ["wheat", "atta", "maida", "suji", "rava", "semolina", "barley", "malt", "rye", "oats", "spelt", "kamut", "triticale", "durum"]
+    },
+    {
+      "id": "MILK",
+      "name": "Milk and Milk Products",
+      "fssai_mandated": true,
+      "sources": ["milk", "dairy", "casein", "sodium caseinate", "whey", "butter", "cheese", "cream", "milk solids", "skimmed milk", "whole milk powder", "lactose", "ghee", "paneer", "curd", "yogurt"]
+    },
+    {
+      "id": "SOY",
+      "name": "Soybeans and Soy Products",
+      "fssai_mandated": true,
+      "sources": ["soy", "soya", "soybean", "soy lecithin", "edamame", "tofu", "hydrolyzed soy protein", "soy flour", "soya sauce"]
+    },
+    {
+      "id": "PEANUT",
+      "name": "Peanuts",
+      "fssai_mandated": true,
+      "sources": ["peanut", "groundnut", "monkey nut", "peanut butter", "peanut flour", "arachis oil"]
+    },
+    {
+      "id": "TREE_NUT",
+      "name": "Tree Nuts",
+      "fssai_mandated": true,
+      "sources": ["almond", "badam", "cashew", "kaju", "walnut", "akhrot", "pistachio", "pista", "hazelnut", "pecan", "brazil nut", "macadamia", "pine nut"]
+    },
+    {
+      "id": "EGG",
+      "name": "Eggs and Egg Products",
+      "fssai_mandated": true,
+      "sources": ["egg", "albumin", "albumen", "egg white", "egg yolk", "lysozyme", "ovalbumin", "meringue", "mayonnaise"]
+    },
+    {
+      "id": "FISH",
+      "name": "Fish and Fish Products",
+      "fssai_mandated": true,
+      "sources": ["fish", "cod", "salmon", "tuna", "anchovy", "gelatin (fish)", "fish oil", "isinglass"]
+    },
+    {
+      "id": "CRUSTACEAN",
+      "name": "Crustaceans and Shellfish",
+      "fssai_mandated": true,
+      "sources": ["crustacean", "crab", "prawn", "shrimp", "lobster", "crawfish", "krill", "shellfish"]
+    },
+    {
+      "id": "SULPHITE",
+      "name": "Sulphites (>= 10mg/kg)",
+      "fssai_mandated": true,
+      "sources": ["sulphite", "sulfite", "sulphur dioxide", "sodium metabisulphite", "potassium metabisulphite", "e220", "e223", "ins 220", "ins 223"]
+    }
+  ]
+}

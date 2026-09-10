@@ -1,0 +1,167 @@
+{
+  "regulation_title": "Food Safety and Standards (Labelling and Display) Regulations, 2020",
+  "short_title": "FSSAI Labelling and Display Regulations",
+  "authority": "Food Safety and Standards Authority of India (FSSAI)",
+  "version": "2020.1",
+  "effective_date": "2021-11-17",
+  "amendments": [
+    "FSS (Labelling and Display) First Amendment Regulations, 2021",
+    "FSS (Labelling and Display) Second Amendment Regulations, 2022",
+    "FSS (Labelling and Display) Amendment Regulations, 2024 (Added Sugars & Saturated Fat thresholds)"
+  ],
+  "rules": [
+    {
+      "id": "FSSAI-SEC-5-1",
+      "citation": "Regulation 5(1)",
+      "title": "Name of Food",
+      "category": "PRODUCT_IDENTITY",
+      "requirement": "The common or generic name of the food shall indicate the true nature of the food contained in the package.",
+      "severity": "CRITICAL",
+      "required": true
+    },
+    {
+      "id": "FSSAI-SEC-5-2",
+      "citation": "Regulation 5(2)",
+      "title": "List of Ingredients in Descending Order",
+      "category": "INGREDIENTS",
+      "requirement": "Ingredients shall be listed in descending order of their ingoing weight (m/m) or volume (v/v) at the time of manufacture. Compound ingredients shall be accompanied by an ingredient breakdown in parentheses.",
+      "severity": "CRITICAL",
+      "required": true
+    },
+    {
+      "id": "FSSAI-SEC-5-2-C",
+      "citation": "Regulation 5(2)(c)",
+      "title": "Quantitative Ingredient Declaration (QUID)",
+      "category": "INGREDIENTS",
+      "requirement": "Where an ingredient is emphasized on the label (through words, pictures, or graphics), the percentage of that ingredient at the time of manufacture shall be declared in the list of ingredients.",
+      "severity": "HIGH",
+      "required": false
+    },
+    {
+      "id": "FSSAI-SEC-5-3",
+      "citation": "Regulation 5(3)",
+      "title": "Nutritional Information (Mandatory 9 Nutrients)",
+      "category": "NUTRITION",
+      "requirement": "Nutritional information per 100g or 100ml or per single consumption pack must include: Energy (kcal), Protein (g), Carbohydrate (g), Total Sugars (g), Added Sugars (g), Total Fat (g), Saturated Fat (g), Trans Fat (g), and Sodium (mg).",
+      "severity": "CRITICAL",
+      "required": true
+    },
+    {
+      "id": "FSSAI-SEC-5-3-B",
+      "citation": "Regulation 5(3)(b)",
+      "title": "Trans Fat and Saturated Fat Declarations",
+      "category": "NUTRITION",
+      "requirement": "Declaration of trans fat content other than naturally occurring trans fat and saturated fat content shall be made on the label.",
+      "severity": "HIGH",
+      "required": true
+    },
+    {
+      "id": "FSSAI-SEC-5-4",
+      "citation": "Regulation 5(4)",
+      "title": "Vegetarian / Non-Vegetarian Logo",
+      "category": "SPECIAL_DECLARATIONS",
+      "requirement": "Every pre-packaged food shall display a green filled circle inside a green square for vegetarian food, or a brown filled triangle inside a brown square for non-vegetarian food, on the principal display panel.",
+      "severity": "CRITICAL",
+      "required": true
+    },
+    {
+      "id": "FSSAI-SEC-5-5",
+      "citation": "Regulation 5(5)",
+      "title": "Declaration of Food Additives (INS Numbers)",
+      "category": "ADDITIVES",
+      "requirement": "Food additives shall be declared with their functional class (e.g., Emulsifier, Preservative, Acidity Regulator) accompanied by their specific chemical name or recognized International Numbering System (INS) code.",
+      "severity": "HIGH",
+      "required": true
+    },
+    {
+      "id": "FSSAI-SEC-5-6",
+      "citation": "Regulation 5(6)",
+      "title": "Name and Complete Address of Manufacturer / Packer",
+      "category": "MANUFACTURER",
+      "requirement": "The name and complete address of the manufacturer and the manufacturing unit shall be declared on the label. If marketed by another entity, the marketer's name and address must also appear with 'Marketed by:'.",
+      "severity": "CRITICAL",
+      "required": true
+    },
+    {
+      "id": "FSSAI-SEC-5-7",
+      "citation": "Regulation 5(7)",
+      "title": "FSSAI Logo and 14-Digit License Number",
+      "category": "LICENSING",
+      "requirement": "The FSSAI logo and 14-digit license number of the manufacturer/packer/marketer shall be displayed on the package in contrast to the background.",
+      "severity": "CRITICAL",
+      "required": true
+    },
+    {
+      "id": "FSSAI-SEC-5-8",
+      "citation": "Regulation 5(8)",
+      "title": "Net Quantity, Retail Sale Price & Consumer Care",
+      "category": "METROLOGY_DECLARATION",
+      "requirement": "Net quantity in standard units, Maximum Retail Price (MRP inclusive of all taxes), and consumer care contact information (phone, email, address) shall be declared.",
+      "severity": "CRITICAL",
+      "required": true
+    },
+    {
+      "id": "FSSAI-SEC-5-9",
+      "citation": "Regulation 5(9)",
+      "title": "Lot / Code / Batch Identification",
+      "category": "TRACEABILITY",
+      "requirement": "A batch number or code number or lot number shall be marked on the package for traceability.",
+      "severity": "HIGH",
+      "required": true
+    },
+    {
+      "id": "FSSAI-SEC-5-10",
+      "citation": "Regulation 5(10)",
+      "title": "Date Marking (Manufacturing Date & Expiry / Best Before)",
+      "category": "DATE_MARKING",
+      "requirement": "Date of manufacture or packaging AND 'Expiry Date' or 'Use by' or 'Best Before' date shall be declared on the package in standard DD/MM/YYYY or MM/YYYY format.",
+      "severity": "CRITICAL",
+      "required": true
+    },
+    {
+      "id": "FSSAI-SEC-5-12",
+      "citation": "Regulation 5(12)",
+      "title": "Instructions for Use and Storage Conditions",
+      "category": "STORAGE",
+      "requirement": "Instructions for use, reconstitution, or special storage conditions before and after opening shall be stated if necessary for food safety.",
+      "severity": "MEDIUM",
+      "required": false
+    },
+    {
+      "id": "FSSAI-SEC-5-14",
+      "citation": "Regulation 5(14)",
+      "title": "Mandatory Allergen Declaration",
+      "category": "ALLERGENS",
+      "requirement": "Food containing cereals with gluten, crustaceans, milk/milk products, eggs, fish, peanuts, tree nuts, soybeans, or sulphite in concentrations >= 10mg/kg shall be declared with 'Contains: [Allergen]' or 'Allergen Advice:'.",
+      "severity": "CRITICAL",
+      "required": true
+    },
+    {
+      "id": "FSSAI-SEC-DAIRY-GHEE",
+      "citation": "FSS (Food Product Standards) Reg 2.1.8",
+      "title": "Ghee & Dairy Fat Purity Declaration",
+      "category": "DAIRY_STANDARDS",
+      "requirement": "Ghee shall contain not less than 99.7% milk fat and not more than 0.3% moisture, free from added vegetable fat, animal body fat, or synthetic colours/flavours.",
+      "severity": "CRITICAL",
+      "required": false
+    },
+    {
+      "id": "FSSAI-SEC-FORTIFICATION",
+      "citation": "FSS (Fortification of Foods) Reg 7",
+      "title": "Fortification (+F Logo & Micronutrient Declaration)",
+      "category": "SPECIAL_DECLARATIONS",
+      "requirement": "Food products fortified with micronutrients (such as Vitamin A & D in Ghee/Oils/Milk) shall display the '+F' logo with the statement 'Fortified with Vitamin A & D'.",
+      "severity": "HIGH",
+      "required": false
+    },
+    {
+      "id": "FSSAI-SEC-AGMARK",
+      "citation": "Agricultural Produce (Grading and Marking) Act",
+      "title": "AGMARK Certification Grade",
+      "category": "CERTIFICATION",
+      "requirement": "Pure Ghee packed under Agmark shall declare Agmark grade (e.g., Special Grade / General Grade) with replica and CA number.",
+      "severity": "MEDIUM",
+      "required": false
+    }
+  ]
+}

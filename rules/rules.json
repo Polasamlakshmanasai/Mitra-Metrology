@@ -1,0 +1,107 @@
+{
+  "jurisdiction": "India",
+  "framework": "Legal Metrology (Packaged Commodities) Rules, 2011 & Amendments",
+  "required_fields": [
+    "mrp",
+    "net_quantity",
+    "manufacturing_date",
+    "best_before",
+    "manufacturer",
+    "address",
+    "consumer_care"
+  ],
+  "mandatory_rules": [
+    {
+      "id": "RULE_6_1_A_MFR_NAME",
+      "field": "manufacturer",
+      "title": "Manufacturer / Packer Identity",
+      "rule_citation": "Rule 6(1)(a)",
+      "required": true,
+      "severity": "high",
+      "description": "Name of the manufacturer or packer or importer must be clearly declared on the principal display panel."
+    },
+    {
+      "id": "RULE_6_1_A_MFR_ADDR",
+      "field": "address",
+      "title": "Complete Manufacturer Address",
+      "rule_citation": "Rule 6(1)(a)",
+      "required": true,
+      "severity": "medium",
+      "description": "Complete postal address of the manufacturer/packer/importer must be displayed."
+    },
+    {
+      "id": "RULE_6_1_B_PROD_NAME",
+      "field": "product_name",
+      "title": "Generic or Common Name",
+      "rule_citation": "Rule 6(1)(b)",
+      "required": false,
+      "severity": "medium",
+      "description": "The common or generic name of the commodity contained in the package must be prominently declared."
+    },
+    {
+      "id": "RULE_6_1_C_NET_QTY",
+      "field": "net_quantity",
+      "title": "Net Quantity Declaration",
+      "rule_citation": "Rule 6(1)(c)",
+      "required": true,
+      "severity": "high",
+      "description": "Net quantity in terms of standard unit of weight or measure (g, kg, ml, L) or number must be stated."
+    },
+    {
+      "id": "RULE_6_1_D_MFG_DATE",
+      "field": "manufacturing_date",
+      "title": "Date of Manufacture / Packaging",
+      "rule_citation": "Rule 6(1)(d)",
+      "required": true,
+      "severity": "medium",
+      "description": "The month and year in which the commodity is manufactured or packed must be clearly mentioned."
+    },
+    {
+      "id": "RULE_6_1_D_EXPIRY",
+      "field": "best_before",
+      "title": "Best Before / Expiry Date",
+      "rule_citation": "Rule 6(1)(d)",
+      "required": true,
+      "severity": "medium",
+      "description": "Best before or use by date must be declared on commodities having limited shelf life."
+    },
+    {
+      "id": "RULE_6_1_E_MRP",
+      "field": "mrp",
+      "title": "Maximum Retail Price (MRP)",
+      "rule_citation": "Rule 6(1)(e)",
+      "required": true,
+      "severity": "high",
+      "description": "Maximum Retail Price (MRP) in INR inclusive of all taxes must be declared without overwriting or manipulation."
+    },
+    {
+      "id": "RULE_6_1_N_CONSUMER_CARE",
+      "field": "consumer_care",
+      "title": "Consumer Care Details",
+      "rule_citation": "Rule 6(1)(n)",
+      "required": true,
+      "severity": "medium",
+      "description": "Name, address, telephone number and email address of the person/office to contact for consumer grievances."
+    },
+    {
+      "id": "RULE_FSSAI_COMPLIANCE",
+      "field": "fssai",
+      "title": "FSSAI License / Registration",
+      "rule_citation": "FSS Packaging & Labelling Regulations",
+      "required": true,
+      "severity": "high",
+      "description": "14-digit FSSAI license number must be printed on all food and dietary commodities."
+    }
+  ],
+  "scoring_weights": {
+    "product_name": 10,
+    "mrp": 20,
+    "net_quantity": 20,
+    "manufacturer": 10,
+    "address": 10,
+    "manufacturing_date": 10,
+    "best_before": 10,
+    "consumer_care": 5,
+    "fssai": 5
+  }
+}
