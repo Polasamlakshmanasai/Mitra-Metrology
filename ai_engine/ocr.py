@@ -11,11 +11,13 @@ import cv2
 import pytesseract
 from pytesseract import Output
 
-# Search standard Windows install locations or PATH
+# Search standard Windows and Linux install locations or PATH
 POSSIBLE_PATHS = [
     r"C:\Program Files\Tesseract-OCR\tesseract.exe",
     r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
     os.path.expandvars(r"%LOCALAPPDATA%\Programs\Tesseract-OCR\tesseract.exe"),
+    "/usr/bin/tesseract",
+    "/usr/local/bin/tesseract",
     shutil.which("tesseract") or ""
 ]
 
@@ -205,7 +207,20 @@ def extract_text(image_path: str):
     if is_tesseract_available():
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         t = pytesseract.image_to_string(gray)
-        if t.strip():
+        if t and len(t.strip()) > 15:
+            return t
+        
+        # Try enhanced image with CLAHE contrast normalization
+        try:
+            from preprocessing import preprocess_image
+            prep = preprocess_image(image)
+            t_enh = pytesseract.image_to_string(prep["enhanced"])
+            if t_enh and len(t_enh.strip()) > len(t.strip() if t else ""):
+                return t_enh
+        except Exception:
+            pass
+
+        if t and t.strip():
             return t
 
     # Scenario-aware fallback for packaging compliance evaluation

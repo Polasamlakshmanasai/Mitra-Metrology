@@ -1,42 +1,60 @@
-# render.yaml — Render Blueprint for Mitra Metrology
-# Deploy both services from a single GitHub repository.
-# Docs: https://render.com/docs/blueprint-spec
+# render.yaml
+# Mitra Metrology - Render Blueprint
+# Deploys both Backend (FastAPI) and Frontend (React/Vite)
 
 services:
-  # ─────────────────────────────────────────────
-  # BACKEND — FastAPI (Docker, monorepo root context)
-  # ─────────────────────────────────────────────
+
+  # ==========================================
+  # BACKEND - FastAPI + Docker + Tesseract
+  # ==========================================
   - type: web
     name: mitra-metrology-api
     runtime: docker
-    # Docker build context is the repo ROOT so ai_engine/ and rules/ are accessible.
-    # The Dockerfile lives at backend/Dockerfile.
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: .
-    plan: free
-    envVars:
-      - key: SECRET_KEY
-        generateValue: true   # Render auto-generates a strong random value
-      - key: PORT
-        value: "8000"
 
-  # ─────────────────────────────────────────────
-  # FRONTEND — React/Vite (Static Site)
-  # ─────────────────────────────────────────────
+    # Dockerfile is inside backend/
+    dockerfilePath: ./backend/Dockerfile
+
+    # Build from repository root because
+    # ai_engine/ and rules/ are outside backend/
+    dockerContext: .
+
+    plan: free
+
+    envVars:
+      # Render automatically generates a secure value
+      - key: SECRET_KEY
+        generateValue: true
+
+      # Add the Vercel frontend URL later
+      - key: FRONTEND_URL
+        sync: false
+
+
+  # ==========================================
+  # FRONTEND - React + Vite
+  # ==========================================
   - type: web
     name: mitra-metrology-frontend
     runtime: static
+
+    # Frontend is inside frontend/
     rootDir: frontend
+
+    # Build React/Vite application
     buildCommand: npm install && npm run build
+
+    # Vite production output
     staticPublishPath: dist
+
     plan: free
+
     envVars:
-      # Set this to your deployed backend URL after the API service is up.
-      # Example: https://mitra-metrology-api.onrender.com
+      # Backend API URL
       - key: VITE_API_URL
-        value: "https://mitra-metrology-api.onrender.com"
+        value: https://mitra-metrology-api.onrender.com
+
+    # React SPA routing
     routes:
-      # SPA fallback — all routes serve index.html
       - type: rewrite
         source: /*
         destination: /index.html

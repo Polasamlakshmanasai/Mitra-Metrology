@@ -16,10 +16,13 @@ function Login() {
     e.preventDefault();
     setMessage("");
 
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanPassword = password.trim();
+
     try {
       const response = await axios.post(`${API_BASE_URL}/auth/login`, {
-        email,
-        password,
+        email: cleanEmail,
+        password: cleanPassword,
       });
 
       const token = response.data.access_token || response.data.token;
@@ -59,6 +62,12 @@ function Login() {
     }
   };
 
+  const fillDemoCredentials = () => {
+    setEmail("user@mitra.com");
+    setPassword("User@123");
+    setMessage("");
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center px-6">
 
@@ -91,6 +100,20 @@ function Login() {
           onSubmit={handleLogin}
           className="bg-slate-900 border border-slate-800 rounded-2xl p-8"
         >
+
+          <div className="flex items-center justify-between p-3 bg-blue-950/40 border border-blue-800/40 rounded-xl text-xs text-blue-300 mb-5">
+            <div>
+              <span className="font-semibold">Demo Citizen:</span>
+              <div className="text-[11px] text-slate-400 font-mono mt-0.5">user@mitra.com / User@123</div>
+            </div>
+            <button
+              type="button"
+              onClick={fillDemoCredentials}
+              className="px-2.5 py-1 bg-blue-800/60 hover:bg-blue-700/60 text-white rounded-lg text-[11px] font-medium transition"
+            >
+              Fill Demo
+            </button>
+          </div>
 
           <label className="block text-slate-300 mb-2">
             Email

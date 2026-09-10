@@ -18,11 +18,14 @@ function OfficerLogin() {
     setIsSubmitting(true);
     setMessage("");
 
+    const cleanId = officerId.trim();
+    const cleanPassword = password.trim();
+
     try {
-      const email = officerId.includes("@") ? officerId : `${officerId}@mitra.gov.in`;
+      const email = cleanId.includes("@") ? cleanId.toLowerCase() : `${cleanId.toLowerCase()}@mitra.gov.in`;
       const res = await axios.post(`${API_BASE_URL}/auth/login`, {
         email,
-        password,
+        password: cleanPassword,
       });
 
       const token = res.data.access_token || res.data.token;
@@ -39,11 +42,21 @@ function OfficerLogin() {
       localStorage.setItem("role", "officer");
       navigate("/officer/dashboard");
     } catch (err) {
+      if (err?.code === "ERR_NETWORK" || !err?.response) {
+        setMessage(`Cannot reach API server at ${API_BASE_URL}. Ensure backend service is running.`);
+        return;
+      }
       const detail = err?.response?.data?.detail || "Invalid officer badge or password.";
       setMessage(detail);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const fillDemoCredentials = () => {
+    setOfficerId("officer_22472@mitra.gov.in");
+    setPassword("Officer@123");
+    setMessage("");
   };
 
   return (
@@ -75,6 +88,20 @@ function OfficerLogin() {
             </div>
           )}
 
+          <div className="flex items-center justify-between p-3 bg-emerald-950/40 border border-emerald-800/40 rounded-xl text-xs text-emerald-300">
+            <div>
+              <span className="font-semibold">Inspector Credentials:</span>
+              <div className="text-[11px] text-slate-400 font-mono mt-0.5">officer_22472@mitra.gov.in / Officer@123</div>
+            </div>
+            <button
+              type="button"
+              onClick={fillDemoCredentials}
+              className="px-2.5 py-1 bg-emerald-800/60 hover:bg-emerald-700/60 text-white rounded-lg text-[11px] font-medium transition"
+            >
+              Fill Demo
+            </button>
+          </div>
+
           <div>
             <label className="block text-slate-300 text-xs font-semibold mb-2">
               Badge / Officer Email
@@ -84,7 +111,7 @@ function OfficerLogin() {
               required
               value={officerId}
               onChange={(e) => setOfficerId(e.target.value)}
-              placeholder="officer@mitra.gov.in"
+              placeholder="officer_22472@mitra.gov.in"
               className="w-full bg-slate-800 text-white border border-slate-700 rounded-xl px-4 py-3 outline-none focus:border-emerald-500 text-sm"
             />
           </div>

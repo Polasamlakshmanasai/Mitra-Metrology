@@ -23,6 +23,7 @@ router = APIRouter(
 
 
 @router.get("/stats")
+@router.get("/stats/summary")
 def get_inspection_stats(db: Session = Depends(get_db)):
     """
     Step 19: Returns real dynamic metrics computed directly from database records.

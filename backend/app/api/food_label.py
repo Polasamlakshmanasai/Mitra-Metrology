@@ -16,13 +16,24 @@ from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Depends
 from sqlalchemy.orm import Session
 
 # Setup import paths
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
-AI_ENGINE_DIR = PROJECT_ROOT / "ai_engine"
-RULES_DIR = PROJECT_ROOT / "rules"
+candidate_roots = [
+    Path(__file__).resolve().parent.parent.parent.parent,
+    Path(__file__).resolve().parent.parent.parent,
+    Path(__file__).resolve().parent.parent,
+    Path("/app")
+]
 
-for p in [str(AI_ENGINE_DIR), str(RULES_DIR)]:
-    if p not in sys.path:
-        sys.path.insert(0, p)
+for root in candidate_roots:
+    ai_dir = root / "ai_engine"
+    rules_dir = root / "rules"
+    if ai_dir.is_dir():
+        if str(ai_dir) not in sys.path:
+            sys.path.insert(0, str(ai_dir))
+        if str(root) not in sys.path:
+            sys.path.insert(0, str(root))
+    if rules_dir.is_dir():
+        if str(rules_dir) not in sys.path:
+            sys.path.insert(0, str(rules_dir))
 
 import cv2
 from image_quality import assess_image_quality

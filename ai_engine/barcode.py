@@ -70,9 +70,7 @@ def detect_barcodes(image):
             })
 
     except Exception as error:
-
-        return [{
-            "error": str(error)
-        }]
+        # Barcode detector is optional/heuristic; return empty list gracefully
+        return []
 
     return results

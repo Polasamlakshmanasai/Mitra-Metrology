@@ -1,3 +1,5 @@
+import API_BASE_URL from "../config";
+
 /**
  * Centralized Computer Vision Pipeline Configuration.
  * Holds user-configurable and model-specific hyperparameters.
@@ -23,7 +25,7 @@ export const VisionConfig = {
   mode: "LOCAL",
 
   // Model backend details
-  cloudApiUrl: `${import.meta.env.VITE_API_URL || "http://localhost:8000"}/predict`,
+  cloudApiUrl: `${API_BASE_URL}/predict`,
 
 
   update(newConfig) {

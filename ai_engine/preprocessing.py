@@ -14,6 +14,21 @@ def convert_to_grayscale(image):
     return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
 
+def correct_illumination_and_brighten(gray):
+    """
+    Adaptive gamma & illumination boost for dark, shadowed, or under-exposed packaging images.
+    If the average luminance is low (mean < 125), applies non-linear gamma expansion
+    to lift dark shadows and reveal faint packaging declarations without washing out highlights.
+    """
+    mean_val = float(np.mean(gray))
+    if mean_val < 125:
+        # Gamma < 1.0 brightens shadows non-linearly
+        gamma = max(0.40, min(0.95, mean_val / 130.0))
+        table = np.array([((i / 255.0) ** gamma) * 255 for i in range(256)]).astype("uint8")
+        return cv2.LUT(gray, table)
+    return gray
+
+
 def enhance_contrast(gray):
     """
     Apply CLAHE (Contrast Limited Adaptive Histogram Equalization)
@@ -102,7 +117,8 @@ def preprocess_image(image):
         image = cv2.resize(image, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_AREA)
 
     gray = convert_to_grayscale(image)
-    denoised = denoise_image(gray)
+    brightened = correct_illumination_and_brighten(gray)
+    denoised = denoise_image(brightened)
     enhanced = enhance_contrast(denoised)
     skew_corrected = correct_skew(enhanced)
     thresholded = adaptive_threshold(skew_corrected)
@@ -110,6 +126,7 @@ def preprocess_image(image):
     return {
         "original": image,
         "gray": gray,
+        "brightened": brightened,
         "enhanced": skew_corrected,
         "thresholded": thresholded
     }

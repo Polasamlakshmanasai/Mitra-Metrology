@@ -8,10 +8,17 @@ import sys
 from pathlib import Path
 
 # Ensure ai_engine directory is in sys.path
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
-AI_ENGINE_DIR = PROJECT_ROOT / "ai_engine"
-if str(AI_ENGINE_DIR) not in sys.path:
-    sys.path.insert(0, str(AI_ENGINE_DIR))
+for root in [
+    Path(__file__).resolve().parent.parent.parent.parent,
+    Path(__file__).resolve().parent.parent.parent,
+    Path("/app")
+]:
+    ai_dir = root / "ai_engine"
+    if ai_dir.is_dir():
+        if str(ai_dir) not in sys.path:
+            sys.path.insert(0, str(ai_dir))
+        if str(root) not in sys.path:
+            sys.path.insert(0, str(root))
 
 import cv2
 from image_quality import assess_image_quality

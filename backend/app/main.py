@@ -26,8 +26,11 @@ from app.api.test import router as test_router
 from app.api.predict import router as predict_router
 from app.api.food_label import router as food_label_router
 
-# Initialize database schema
+from app.services.seed_service import seed_default_accounts
+
+# Initialize database schema and ensure default credentials exist
 Base.metadata.create_all(bind=engine)
+seed_default_accounts()
 
 # Static files directory for uploads
 UPLOAD_DIR = Path(__file__).resolve().parent.parent / "uploads"
@@ -38,6 +41,10 @@ app = FastAPI(
     description="AI-Powered Packaged Commodity Legal Metrology & FSSAI Compliance Inspector",
     version="1.0.0"
 )
+
+@app.on_event("startup")
+def on_startup():
+    seed_default_accounts()
 
 # Enable CORS for frontend integration
 app.add_middleware(
