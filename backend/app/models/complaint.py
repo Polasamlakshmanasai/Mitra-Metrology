@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, DateTime, Text
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.database.connection import Base
 
@@ -23,4 +23,4 @@ class Complaint(Base):
 
     status = Column(String, default="PENDING")  # PENDING, INVESTIGATING, RESOLVED, DISMISSED
 
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))

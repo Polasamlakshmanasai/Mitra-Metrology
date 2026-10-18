@@ -2,10 +2,19 @@
 """
 Image Preprocessing Pipeline for Packaged Commodity OCR & Computer Vision.
 Handles illumination correction, noise filtering, contrast enhancement, and binarization.
+
+v2 additions:
+  - generate_preprocessing_variants(): produces 4 named variants for field-level multi-OCR
+  - All existing functions and preprocess_image() are unchanged.
 """
 
 import cv2
 import numpy as np
+
+
+MIN_WIDTH = 500
+MIN_HEIGHT = 500
+BLUR_THRESHOLD = 80.0
 
 
 def convert_to_grayscale(image):
@@ -22,7 +31,6 @@ def correct_illumination_and_brighten(gray):
     """
     mean_val = float(np.mean(gray))
     if mean_val < 125:
-        # Gamma < 1.0 brightens shadows non-linearly
         gamma = max(0.40, min(0.95, mean_val / 130.0))
         table = np.array([((i / 255.0) ** gamma) * 255 for i in range(256)]).astype("uint8")
         return cv2.LUT(gray, table)
@@ -92,9 +100,88 @@ def correct_skew(gray):
     return gray
 
 
+def _resize_for_ocr(image):
+    """
+    Ensures image is between 800–2400px on the longest side.
+    Returns resized numpy array. Input can be color or grayscale.
+    """
+    h, w = image.shape[:2]
+    longest = max(h, w)
+    if longest < 800:
+        scale = 800.0 / longest
+        new_w, new_h = int(w * scale), int(h * scale)
+        return cv2.resize(image, (new_w, new_h), interpolation=cv2.INTER_CUBIC)
+    elif longest > 2400:
+        scale = 2400.0 / longest
+        new_w, new_h = int(w * scale), int(h * scale)
+        return cv2.resize(image, (new_w, new_h), interpolation=cv2.INTER_AREA)
+    return image
+
+
+def _sharpen(gray):
+    """
+    Unsharp mask sharpening — makes fine printed text crisper.
+    """
+    blurred = cv2.GaussianBlur(gray, (0, 0), 3)
+    sharpened = cv2.addWeighted(gray, 1.5, blurred, -0.5, 0)
+    return np.clip(sharpened, 0, 255).astype(np.uint8)
+
+
+def generate_preprocessing_variants(image):
+    """
+    Generates 4 named preprocessing variants for multi-variant OCR.
+    Each variant is optimised for a different label/lighting condition.
+
+    Returns dict:
+    {
+        "clahe":     <grayscale ndarray>  — standard pipeline (best for most labels)
+        "otsu":      <grayscale ndarray>  — CLAHE + Otsu global threshold (high contrast)
+        "sharp":     <grayscale ndarray>  — bilateral + unsharp mask (fine text)
+        "inverted":  <grayscale ndarray>  — inverted (dark-background / white-text labels)
+    }
+
+    The returned images are ready to be passed directly to pytesseract or run_ocr().
+    """
+    # Ensure image is a color or grayscale numpy array
+    if isinstance(image, str):
+        image = cv2.imread(image)
+        if image is None:
+            raise ValueError(f"Cannot read image from path: {image}")
+
+    image = _resize_for_ocr(image)
+    gray = convert_to_grayscale(image)
+    brightened = correct_illumination_and_brighten(gray)
+
+    # Variant 1: CLAHE (standard — best all-rounder for packaging labels)
+    denoised = denoise_image(brightened)
+    clahe_img = enhance_contrast(denoised)
+    clahe_img = correct_skew(clahe_img)
+
+    # Variant 2: Otsu global threshold on CLAHE result (high-contrast / b&w labels)
+    _, otsu_img = cv2.threshold(
+        enhance_contrast(gray),
+        0, 255,
+        cv2.THRESH_BINARY + cv2.THRESH_OTSU
+    )
+
+    # Variant 3: Bilateral denoising + unsharp mask sharpening (fine print)
+    sharp_img = _sharpen(denoise_image(brightened))
+    sharp_img = enhance_contrast(sharp_img)
+
+    # Variant 4: Inverted (white text on dark/coloured label backgrounds)
+    inverted_img = cv2.bitwise_not(clahe_img)
+
+    return {
+        "clahe":    clahe_img,
+        "otsu":     otsu_img,
+        "sharp":    sharp_img,
+        "inverted": inverted_img,
+    }
+
+
 def preprocess_image(image):
     """
-    Main preprocessing entry point.
+    Main preprocessing entry point — UNCHANGED from v1 for backward compatibility.
     Accepts either an image path string or a numpy array.
     """
     if isinstance(image, str):
@@ -124,9 +211,9 @@ def preprocess_image(image):
     thresholded = adaptive_threshold(skew_corrected)
 
     return {
-        "original": image,
-        "gray": gray,
-        "brightened": brightened,
-        "enhanced": skew_corrected,
+        "original":    image,
+        "gray":        gray,
+        "brightened":  brightened,
+        "enhanced":    skew_corrected,
         "thresholded": thresholded
     }

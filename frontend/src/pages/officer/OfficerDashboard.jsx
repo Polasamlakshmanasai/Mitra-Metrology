@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
+import { Search, AlertTriangle, ShieldCheck, Download, RefreshCw, Eye, Package, X, CheckCircle, FileText, Scale } from "lucide-react";
 import Navbar from "../../components/Navbar";
-
+import Footer from "../../components/Footer";
 import API_BASE_URL from "../../config";
-
 
 function OfficerDashboard() {
   const [stats, setStats] = useState({
@@ -27,6 +27,7 @@ function OfficerDashboard() {
   };
 
   const loadData = useCallback(async () => {
+    setLoading(true);
     try {
       const headers = getAuthHeaders();
 
@@ -57,7 +58,6 @@ function OfficerDashboard() {
       setSelectedInspection(res.data);
     } catch (err) {
       console.error("Failed to load inspection detail", err);
-      // Fallback to scans endpoint
       try {
         const headers = getAuthHeaders();
         const res = await axios.get(`${API_BASE_URL}/scans/${scanId}`, { headers });
@@ -98,126 +98,131 @@ function OfficerDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex flex-col">
+    <div className="min-h-screen bg-[#FFFFFF] flex flex-col justify-between">
       <Navbar role="officer" />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8">
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        {/* Header Section */}
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-8 pb-4 border-b border-[#D5DCE5]">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs px-2.5 py-1 rounded bg-emerald-950 text-emerald-400 font-bold border border-emerald-800">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-[11px] px-2 py-0.5 rounded bg-[#F5F7FA] text-[#174A7E] font-bold border border-[#D5DCE5]">
                 OFFICER CONSOLE
               </span>
-              <span className="text-xs text-slate-400">Department of Legal Metrology</span>
+              <span className="text-xs font-semibold text-[#64748B]">Legal Metrology Regulatory Department</span>
             </div>
-            <h2 className="text-3xl font-bold tracking-tight mt-1">Inspection & Legal Enforcement Dashboard</h2>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#183153] tracking-tight">
+              Inspection & Regulatory Enforcement Dashboard
+            </h1>
           </div>
 
           <button
             onClick={loadData}
-            className="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl text-xs font-semibold border border-slate-700 flex items-center gap-2 transition"
+            className="bg-white border border-[#D5DCE5] hover:bg-[#F5F7FA] text-[#183153] px-3.5 py-2 rounded text-xs font-semibold flex items-center gap-2 shadow-xs transition-colors"
           >
-            <span>🔄</span> Refresh Data
+            <RefreshCw size={14} className="text-[#174A7E]" />
+            Refresh Records
           </button>
         </div>
 
-        {/* Step 27: 4 KPI Cards */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-            <span className="text-xs text-slate-400 font-medium block">Total Inspections</span>
-            <div className="flex items-baseline justify-between mt-2">
-              <span className="text-3xl font-black text-white">
-                {stats.total_inspections ?? stats.total_scans ?? 0}
-              </span>
-              <span className="text-xl">📦</span>
+        {/* Metrics Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-[#F5F7FA] border border-[#D5DCE5] rounded p-5">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">Total Audits</span>
+              <FileText size={15} className="text-[#174A7E]" />
             </div>
+            <div className="text-3xl font-bold text-[#183153]">
+              {stats.total_inspections ?? stats.total_scans ?? 0}
+            </div>
+            <span className="text-[11px] text-[#64748B] mt-1 block">Packaged commodity scans</span>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-            <span className="text-xs text-slate-400 font-medium block">Compliant Packages</span>
-            <div className="flex items-baseline justify-between mt-2">
-              <span className="text-3xl font-black text-emerald-400">
-                {stats.compliant ?? stats.compliant_scans ?? 0}
-              </span>
-              <span className="text-xs px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800">
-                Valid
-              </span>
+          <div className="bg-[#F5F7FA] border border-[#D5DCE5] rounded p-5">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[11px] font-bold text-[#15803D] uppercase tracking-wider">Compliant</span>
+              <ShieldCheck size={15} className="text-[#15803D]" />
             </div>
+            <div className="text-3xl font-bold text-[#15803D]">
+              {stats.compliant ?? stats.compliant_scans ?? 0}
+            </div>
+            <span className="text-[11px] text-[#64748B] mt-1 block">Rule 6 declarations verified</span>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-            <span className="text-xs text-slate-400 font-medium block">Review Required</span>
-            <div className="flex items-baseline justify-between mt-2">
-              <span className="text-3xl font-black text-amber-400">
-                {stats.review_required ?? 0}
-              </span>
-              <span className="text-xs px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">
-                Uncertain
-              </span>
+          <div className="bg-[#F5F7FA] border border-[#D5DCE5] rounded p-5">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[11px] font-bold text-[#B45309] uppercase tracking-wider">Review Pending</span>
+              <Search size={15} className="text-[#B45309]" />
             </div>
+            <div className="text-3xl font-bold text-[#B45309]">
+              {stats.review_required ?? 0}
+            </div>
+            <span className="text-[11px] text-[#64748B] mt-1 block">Awaiting officer / user review</span>
           </div>
 
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-lg">
-            <span className="text-xs text-slate-400 font-medium block">Non-Compliant Violations</span>
-            <div className="flex items-baseline justify-between mt-2">
-              <span className="text-3xl font-black text-rose-400">
-                {stats.non_compliant ?? stats.non_compliant_scans ?? 0}
-              </span>
-              <span className="text-xl">⚠️</span>
+          <div className="bg-[#F5F7FA] border border-[#D5DCE5] rounded p-5">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="text-[11px] font-bold text-[#B91C1C] uppercase tracking-wider">Non-Compliant</span>
+              <AlertTriangle size={15} className="text-[#B91C1C]" />
             </div>
+            <div className="text-3xl font-bold text-[#B91C1C]">
+              {stats.non_compliant ?? stats.non_compliant_scans ?? 0}
+            </div>
+            <span className="text-[11px] text-[#64748B] mt-1 block">Actionable statutory violations</span>
           </div>
         </div>
 
-        {/* Tab Selection */}
-        <div className="flex items-center gap-4 border-b border-slate-800 pb-4 mb-6">
+        {/* Tabs */}
+        <div className="flex items-center gap-4 border-b border-[#D5DCE5] mb-6">
           <button
             onClick={() => setActiveTab("INSPECTIONS")}
-            className={`text-sm font-bold pb-1 transition flex items-center gap-2 ${
+            className={`text-xs sm:text-sm font-bold pb-3 px-2 transition-colors flex items-center gap-2 border-b-2 ${
               activeTab === "INSPECTIONS"
-                ? "text-blue-400 border-b-2 border-blue-400"
-                : "text-slate-400 hover:text-white"
+                ? "text-[#174A7E] border-[#174A7E]"
+                : "text-[#64748B] border-transparent hover:text-[#183153]"
             }`}
           >
-            <span>🔍</span> Inspections & Audits ({inspections.length})
+            <Search size={15} /> Inspections & Audits ({inspections.length})
           </button>
 
           <button
             onClick={() => setActiveTab("COMPLAINTS")}
-            className={`text-sm font-bold pb-1 transition flex items-center gap-2 ${
+            className={`text-xs sm:text-sm font-bold pb-3 px-2 transition-colors flex items-center gap-2 border-b-2 ${
               activeTab === "COMPLAINTS"
-                ? "text-emerald-400 border-b-2 border-emerald-400"
-                : "text-slate-400 hover:text-white"
+                ? "text-[#174A7E] border-[#174A7E]"
+                : "text-[#64748B] border-transparent hover:text-[#183153]"
             }`}
           >
-            <span>📢</span> Consumer Grievance Queue ({complaints.length})
+            <AlertTriangle size={15} /> Consumer Grievances ({complaints.length})
           </button>
         </div>
 
         {/* Tab 1: Inspections Table */}
         {activeTab === "INSPECTIONS" && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+          <div className="bg-white border border-[#D5DCE5] rounded shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead>
-                  <tr className="border-b border-slate-800 text-xs uppercase text-slate-400 bg-slate-950/60">
-                    <th className="py-3 px-5 font-semibold">ID</th>
-                    <th className="py-3 px-5 font-semibold">Product Name</th>
-                    <th className="py-3 px-5 font-semibold">Status</th>
-                    <th className="py-3 px-5 font-semibold">Date</th>
-                    <th className="py-3 px-5 font-semibold text-right">Action</th>
+              <table className="w-full text-left text-xs whitespace-nowrap">
+                <thead className="bg-[#F5F7FA] text-[#64748B] uppercase tracking-wider font-semibold border-b border-[#D5DCE5]">
+                  <tr>
+                    <th className="py-3 px-6">Audit ID</th>
+                    <th className="py-3 px-6">Commodity / Manufacturer</th>
+                    <th className="py-3 px-6">Compliance Verdict</th>
+                    <th className="py-3 px-6">Inspection Date</th>
+                    <th className="py-3 px-6 text-right">Statutory Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60">
+                <tbody className="divide-y divide-[#D5DCE5] text-[#183153]">
                   {loading ? (
                     <tr>
-                      <td colSpan="5" className="py-8 text-center text-slate-400">
-                        Loading inspections...
+                      <td colSpan="5" className="py-12 text-center text-[#64748B]">
+                        Loading inspection data from database...
                       </td>
                     </tr>
                   ) : inspections.length === 0 ? (
                     <tr>
-                      <td colSpan="5" className="py-8 text-center text-slate-500">
-                        No product inspections recorded yet.
+                      <td colSpan="5" className="py-12 text-center text-[#64748B]">
+                        No product inspections recorded in system.
                       </td>
                     </tr>
                   ) : (
@@ -225,40 +230,44 @@ function OfficerDashboard() {
                       <tr
                         key={insp.id}
                         onClick={() => handleSelectInspection(insp.id)}
-                        className="hover:bg-slate-800/50 transition cursor-pointer"
+                        className="hover:bg-[#F5F7FA] transition-colors cursor-pointer group"
                       >
-                        <td className="py-3.5 px-5 font-mono text-xs text-blue-400">#{insp.id}</td>
-                        <td className="py-3.5 px-5 font-medium text-slate-200">
-                          {insp.product_name}
+                        <td className="py-3.5 px-6 font-mono text-[#64748B] font-semibold">#{insp.id}</td>
+                        <td className="py-3.5 px-6">
+                          <p className="font-bold text-[#183153]">{insp.product_name || "Packaged Commodity"}</p>
                           {insp.manufacturer && (
-                            <span className="block text-xs text-slate-400">{insp.manufacturer}</span>
+                            <p className="text-[11px] text-[#64748B]">{insp.manufacturer}</p>
                           )}
                         </td>
-                        <td className="py-3.5 px-5">
+                        <td className="py-3.5 px-6">
                           <span
-                            className={`text-xs px-2.5 py-0.5 rounded-full font-bold uppercase ${
+                            className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold border ${
                               insp.status === "COMPLIANT"
-                                ? "bg-emerald-950 text-emerald-400 border border-emerald-800"
+                                ? "bg-[#DCFCE7] text-[#15803D] border-[#BBF7D0]"
                                 : insp.status === "NON-COMPLIANT" || insp.status === "NON_COMPLIANT"
-                                ? "bg-rose-950 text-rose-400 border border-rose-800"
-                                : "bg-amber-950 text-amber-400 border border-amber-800"
+                                ? "bg-[#FEE2E2] text-[#B91C1C] border-[#FECACA]"
+                                : "bg-[#FEF3C7] text-[#B45309] border-[#FDE68A]"
                             }`}
                           >
-                            {insp.status}
+                            {insp.status.replace("_", "-")}
                           </span>
                         </td>
-                        <td className="py-3.5 px-5 text-xs text-slate-400 font-mono">
-                          {insp.date || (insp.created_at ? new Date(insp.created_at).toLocaleDateString() : "-")}
+                        <td className="py-3.5 px-6 text-[#64748B]">
+                          {insp.date || (insp.created_at ? new Date(insp.created_at).toLocaleDateString() : "--")}
                         </td>
-                        <td className="py-3.5 px-5 text-right">
+                        <td className="py-3.5 px-6 text-right space-x-2" onClick={(e) => e.stopPropagation()}>
                           <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              downloadPdf(insp.id);
-                            }}
-                            className="text-xs bg-slate-800 hover:bg-blue-600 text-slate-300 hover:text-white px-3 py-1 rounded-lg border border-slate-700 transition"
+                            onClick={() => handleSelectInspection(insp.id)}
+                            className="px-2.5 py-1 bg-white border border-[#D5DCE5] hover:bg-[#F5F7FA] text-[#174A7E] text-xs font-semibold rounded"
                           >
-                            📥 PDF Report
+                            Examine
+                          </button>
+                          <button
+                            onClick={() => downloadPdf(insp.id)}
+                            className="px-2.5 py-1 bg-[#174A7E] hover:bg-[#133D68] text-white text-xs font-semibold rounded inline-flex items-center gap-1 shadow-xs"
+                            title="Download Legal Metrology PDF Report"
+                          >
+                            <Download size={12} /> PDF
                           </button>
                         </td>
                       </tr>
@@ -272,66 +281,72 @@ function OfficerDashboard() {
 
         {/* Tab 2: Complaints Table */}
         {activeTab === "COMPLAINTS" && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+          <div className="bg-white border border-[#D5DCE5] rounded shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead>
-                  <tr className="border-b border-slate-800 text-xs uppercase text-slate-400 bg-slate-950/60">
-                    <th className="py-3 px-5 font-semibold">Ref ID</th>
-                    <th className="py-3 px-5 font-semibold">Commodity</th>
-                    <th className="py-3 px-5 font-semibold">Grievance Details</th>
-                    <th className="py-3 px-5 font-semibold">Status</th>
-                    <th className="py-3 px-5 font-semibold text-right">Officer Action</th>
+              <table className="w-full text-left text-xs whitespace-nowrap">
+                <thead className="bg-[#F5F7FA] text-[#64748B] uppercase tracking-wider font-semibold border-b border-[#D5DCE5]">
+                  <tr>
+                    <th className="py-3 px-6">Grievance Ref</th>
+                    <th className="py-3 px-6">Commodity / Manufacturer</th>
+                    <th className="py-3 px-6">Allegation Summary</th>
+                    <th className="py-3 px-6">Status</th>
+                    <th className="py-3 px-6 text-right">Regulatory Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60">
-                  {complaints.length === 0 ? (
+                <tbody className="divide-y divide-[#D5DCE5] text-[#183153]">
+                  {loading ? (
                     <tr>
-                      <td colSpan="5" className="py-8 text-center text-slate-500">
-                        No consumer grievances registered.
+                      <td colSpan="5" className="py-12 text-center text-[#64748B]">
+                        Loading consumer grievances...
+                      </td>
+                    </tr>
+                  ) : complaints.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" className="py-12 text-center text-[#64748B]">
+                        No consumer grievances currently registered.
                       </td>
                     </tr>
                   ) : (
                     complaints.map((c) => (
-                      <tr key={c.id} className="hover:bg-slate-800/40 transition">
-                        <td className="py-3.5 px-5 font-mono text-xs text-emerald-400">#GRIEV-{c.id}</td>
-                        <td className="py-3.5 px-5 font-medium text-slate-200">
-                          {c.product_name}
+                      <tr key={c.id} className="hover:bg-[#F5F7FA] transition-colors">
+                        <td className="py-3.5 px-6 font-mono text-[#64748B] font-semibold">#GRIEV-{c.id}</td>
+                        <td className="py-3.5 px-6">
+                          <p className="font-bold text-[#183153]">{c.product_name || "Unknown Product"}</p>
                           {c.manufacturer && (
-                            <span className="block text-xs text-slate-400">{c.manufacturer}</span>
+                            <p className="text-[11px] text-[#64748B]">{c.manufacturer}</p>
                           )}
                         </td>
-                        <td className="py-3.5 px-5 text-xs text-slate-300 max-w-xs">
+                        <td className="py-3.5 px-6 max-w-[280px] truncate text-[#475569]" title={c.description}>
                           {c.description}
                         </td>
-                        <td className="py-3.5 px-5">
+                        <td className="py-3.5 px-6">
                           <span
-                            className={`text-xs px-2.5 py-0.5 rounded-full font-bold uppercase ${
+                            className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold border ${
                               c.status === "RESOLVED"
-                                ? "bg-emerald-950 text-emerald-400 border border-emerald-800"
+                                ? "bg-[#DCFCE7] text-[#15803D] border-[#BBF7D0]"
                                 : c.status === "UNDER_REVIEW" || c.status === "INVESTIGATING"
-                                ? "bg-blue-950 text-blue-400 border border-blue-800"
-                                : "bg-amber-950 text-amber-400 border border-amber-800"
+                                ? "bg-[#EDF2F7] text-[#174A7E] border-[#CBD5E1]"
+                                : "bg-[#FEF3C7] text-[#B45309] border-[#FDE68A]"
                             }`}
                           >
-                            {c.status}
+                            {c.status.replace("_", " ")}
                           </span>
                         </td>
-                        <td className="py-3.5 px-5 text-right space-x-2">
+                        <td className="py-3.5 px-6 text-right space-x-2">
                           {c.status !== "RESOLVED" && (
                             <button
                               onClick={() => handleUpdateComplaintStatus(c.id, "RESOLVED")}
-                              className="text-xs bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white px-2.5 py-1 rounded-lg border border-emerald-700/50 transition"
+                              className="text-xs bg-white border border-[#BBF7D0] text-[#15803D] hover:bg-[#DCFCE7] px-2.5 py-1 rounded font-semibold transition-colors"
                             >
-                              Resolve ✓
+                              Mark Resolved
                             </button>
                           )}
                           {c.status === "PENDING" && (
                             <button
                               onClick={() => handleUpdateComplaintStatus(c.id, "UNDER_REVIEW")}
-                              className="text-xs bg-blue-600/20 hover:bg-blue-600 text-blue-300 hover:text-white px-2.5 py-1 rounded-lg border border-blue-700/50 transition"
+                              className="text-xs bg-white border border-[#CBD5E1] text-[#174A7E] hover:bg-[#F5F7FA] px-2.5 py-1 rounded font-semibold transition-colors"
                             >
-                              Investigate 🔍
+                              Initiate Investigation
                             </button>
                           )}
                         </td>
@@ -344,140 +359,162 @@ function OfficerDashboard() {
           </div>
         )}
 
-        {/* Step 28: Officer Evidence-First Inspection Details Modal */}
+        {/* Inspection Details Dossier Modal */}
         {selectedInspection && (
-          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 shadow-2xl">
-              <div className="flex items-start justify-between border-b border-slate-800 pb-4 mb-6">
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+            <div className="bg-white rounded border border-[#D5DCE5] max-w-4xl w-full max-h-[90vh] flex flex-col shadow-xl text-[#183153]">
+              
+              {/* Modal Header */}
+              <div className="flex items-start justify-between border-b border-[#D5DCE5] p-5 bg-[#F5F7FA]">
                 <div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-mono text-slate-400">Inspection #{selectedInspection.scan_id || selectedInspection.id}</span>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs font-mono text-[#64748B]">
+                      Inspection Record #{selectedInspection.scan_id || selectedInspection.id}
+                    </span>
                     <span
-                      className={`text-xs px-2.5 py-0.5 rounded-full font-bold uppercase ${
+                      className={`text-[11px] px-2 py-0.5 rounded font-semibold border uppercase ${
                         selectedInspection.status === "COMPLIANT"
-                          ? "bg-emerald-950 text-emerald-400 border border-emerald-800"
+                          ? "bg-[#DCFCE7] text-[#15803D] border-[#BBF7D0]"
                           : selectedInspection.status === "NON-COMPLIANT" || selectedInspection.status === "NON_COMPLIANT"
-                          ? "bg-rose-950 text-rose-400 border border-rose-800"
-                          : "bg-amber-950 text-amber-400 border border-amber-800"
+                          ? "bg-[#FEE2E2] text-[#B91C1C] border-[#FECACA]"
+                          : "bg-[#FEF3C7] text-[#B45309] border-[#FDE68A]"
                       }`}
                     >
-                      {selectedInspection.status}
+                      {selectedInspection.status.replace("_", "-")}
                     </span>
                   </div>
-                  <h3 className="text-2xl font-bold text-white mt-1">Official Packaging Evidence Dossier</h3>
-                  <p className="text-xs text-slate-400">{selectedInspection.date || selectedInspection.created_at}</p>
+                  <h2 className="text-xl font-bold text-[#183153]">Statutory Evidence Dossier</h2>
+                  <p className="text-xs text-[#64748B] mt-0.5">
+                    {selectedInspection.date || (selectedInspection.created_at ? new Date(selectedInspection.created_at).toLocaleDateString() : "--")}
+                  </p>
                 </div>
                 <button
                   onClick={() => setSelectedInspection(null)}
-                  className="text-slate-400 hover:text-white text-xl p-1"
+                  className="p-1.5 text-[#64748B] hover:text-[#183153] hover:bg-white rounded transition-colors"
                 >
-                  ✕
+                  <X size={18} />
                 </button>
               </div>
 
-              {/* Evidence Flow: Image -> OCR -> Fields -> Confidence -> Rules -> Violations */}
-              <div className="space-y-6">
-                {/* 1. Original Image */}
+              {/* Modal Body */}
+              <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-white">
+                
+                {/* 1. Evidence Image */}
                 <div>
-                  <h4 className="text-xs uppercase tracking-wider text-slate-400 font-bold mb-2">
-                    1. Original Packaging Photo
-                  </h4>
-                  <div className="rounded-xl overflow-hidden bg-slate-950 border border-slate-800 p-2 flex justify-center">
+                  <h3 className="text-xs font-bold text-[#183153] uppercase tracking-wider mb-2">
+                    1. Photographic Package Label Evidence
+                  </h3>
+                  <div className="bg-[#F5F7FA] border border-[#D5DCE5] rounded p-3 flex justify-center">
                     {selectedInspection.evidence?.image_url ? (
                       <img
                         src={`${API_BASE_URL}${selectedInspection.evidence.image_url}`}
-                        alt="Evidence"
-                        className="max-h-64 object-contain rounded"
+                        alt="Audited package label"
+                        className="max-h-72 object-contain rounded border border-[#D5DCE5] bg-white"
                       />
                     ) : (
-                      <div className="py-12 text-slate-500 text-xs">Image path: {selectedInspection.evidence?.image_path || "Stored on server"}</div>
+                      <div className="py-12 flex flex-col items-center justify-center text-[#94A3B8]">
+                        <Package size={40} className="mb-2 opacity-50" />
+                        <span className="text-xs">Image path: {selectedInspection.evidence?.image_path || "Stored on secure server"}</span>
+                      </div>
                     )}
                   </div>
                 </div>
 
-                {/* 2. Extracted Fields & Confidence */}
+                {/* 2. OCR Fields Table */}
                 <div>
-                  <h4 className="text-xs uppercase tracking-wider text-slate-400 font-bold mb-2">
-                    2. OCR Declarations & Confidence Ratings
-                  </h4>
-                  <div className="bg-slate-950 border border-slate-800 rounded-xl divide-y divide-slate-800 text-xs">
-                    {Object.entries(selectedInspection.fields || {}).map(([key, val]) => {
-                      const conf = selectedInspection.confidences?.[key]?.confidence ?? selectedInspection.confidences?.[key] ?? 0.90;
-                      return (
-                        <div key={key} className="p-3 flex items-center justify-between">
-                          <span className="text-slate-400 font-medium capitalize">{key.replace(/_/g, " ")}</span>
-                          <div className="flex items-center gap-3">
-                            <span className="text-slate-200 font-mono font-semibold">
-                              {typeof val === "object" ? JSON.stringify(val) : String(val)}
-                            </span>
-                            <span className={`px-2 py-0.5 rounded font-mono font-bold ${conf >= 0.9 ? "bg-emerald-950 text-emerald-400 border border-emerald-800" : conf >= 0.7 ? "bg-amber-950 text-amber-400 border border-amber-800" : "bg-rose-950 text-rose-400 border border-rose-800"}`}>
-                              {Math.round(conf * 100)}%
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })}
+                  <h3 className="text-xs font-bold text-[#183153] uppercase tracking-wider mb-2">
+                    2. Extracted Declarations & Confidence Evaluation
+                  </h3>
+                  <div className="border border-[#D5DCE5] rounded overflow-hidden">
+                    <table className="w-full text-xs text-left">
+                      <thead className="bg-[#F5F7FA] border-b border-[#D5DCE5] text-[#64748B] uppercase font-semibold">
+                        <tr>
+                          <th className="px-4 py-2.5">Statutory Declaration</th>
+                          <th className="px-4 py-2.5">Extracted Value</th>
+                          <th className="px-4 py-2.5 text-right">Confidence</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[#D5DCE5]">
+                        {Object.entries(selectedInspection.fields || {}).map(([key, val]) => {
+                          const conf = selectedInspection.confidences?.[key]?.confidence ?? selectedInspection.confidences?.[key] ?? 0.85;
+                          return (
+                            <tr key={key} className="hover:bg-[#F5F7FA]">
+                              <td className="px-4 py-2.5 font-semibold text-[#183153] capitalize">
+                                {key.replace(/_/g, " ")}
+                              </td>
+                              <td className="px-4 py-2.5 text-[#183153] font-mono">
+                                {typeof val === "object" ? JSON.stringify(val) : String(val || "Not detected")}
+                              </td>
+                              <td className="px-4 py-2.5 text-right">
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono font-semibold border ${
+                                  conf >= 0.85 ? "bg-[#DCFCE7] text-[#15803D] border-[#BBF7D0]" : conf >= 0.6 ? "bg-[#FEF3C7] text-[#B45309] border-[#FDE68A]" : "bg-[#FEE2E2] text-[#B91C1C] border-[#FECACA]"
+                                }`}>
+                                  {Math.round(conf * 100)}%
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
 
-                {/* 3. OCR Raw Text */}
-                {selectedInspection.ocr_text && (
-                  <div>
-                    <h4 className="text-xs uppercase tracking-wider text-slate-400 font-bold mb-2">
-                      3. Packaging Raw OCR Text
-                    </h4>
-                    <pre className="p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-slate-300 max-h-32 overflow-y-auto whitespace-pre-wrap">
-                      {selectedInspection.ocr_text}
-                    </pre>
-                  </div>
-                )}
-
-                {/* 4. Violations */}
+                {/* 3. Statutory Violations */}
                 <div>
-                  <h4 className="text-xs uppercase tracking-wider text-rose-400 font-bold mb-2">
-                    4. Statutory Violations ({selectedInspection.violations?.length || 0})
-                  </h4>
+                  <h3 className="text-xs font-bold text-[#183153] uppercase tracking-wider mb-2">
+                    3. Statutory Compliance Findings
+                  </h3>
                   {!selectedInspection.violations || selectedInspection.violations.length === 0 ? (
-                    <div className="p-3 bg-emerald-950/30 border border-emerald-900/40 text-emerald-300 rounded-xl text-xs">
-                      ✓ No statutory violations detected. Package fully adheres to the 8 Legal Metrology and FSSAI rules.
+                    <div className="p-3.5 bg-[#DCFCE7] border border-[#BBF7D0] text-[#15803D] rounded flex items-start gap-2.5">
+                      <CheckCircle size={18} className="shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-bold text-xs">No statutory violations detected.</p>
+                        <p className="text-xs mt-0.5">Commodity complies with mandatory Legal Metrology (Packaged Commodities) Rules, 2011 declarations.</p>
+                      </div>
                     </div>
                   ) : (
                     <div className="space-y-2">
                       {selectedInspection.violations.map((v, i) => (
-                        <div key={i} className="p-3 bg-rose-950/30 border border-rose-900/50 rounded-xl text-xs flex justify-between items-start">
-                          <div>
-                            <span className="font-bold text-rose-300 uppercase">{v.field}: </span>
-                            <span className="text-slate-200">{v.description}</span>
+                        <div key={i} className="p-3 bg-[#FEE2E2] border border-[#FECACA] rounded text-xs text-[#B91C1C]">
+                          <div className="flex justify-between items-center mb-1">
+                            <span className="font-bold uppercase tracking-wider">{v.field}</span>
+                            <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 bg-white text-[#B91C1C] border border-[#FECACA] rounded">
+                              {v.severity}
+                            </span>
                           </div>
-                          <span className="text-[10px] uppercase font-bold px-2 py-0.5 bg-rose-900 text-rose-200 rounded">
-                            {v.severity}
-                          </span>
+                          <p>{v.description}</p>
                         </div>
                       ))}
                     </div>
                   )}
                 </div>
+
               </div>
 
-              {/* Action Footer */}
-              <div className="flex justify-between items-center pt-6 mt-6 border-t border-slate-800">
-                <button
-                  onClick={() => downloadPdf(selectedInspection.scan_id || selectedInspection.id)}
-                  className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-emerald-600/20 flex items-center gap-2"
-                >
-                  <span>📥</span> Download Certified PDF Inspection Report
-                </button>
+              {/* Modal Footer */}
+              <div className="flex justify-between items-center p-4 border-t border-[#D5DCE5] bg-[#F5F7FA]">
                 <button
                   onClick={() => setSelectedInspection(null)}
-                  className="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold px-4 py-2.5 rounded-xl"
+                  className="px-4 py-2 text-xs font-semibold text-[#183153] bg-white border border-[#D5DCE5] rounded hover:bg-[#F5F7FA]"
                 >
                   Close Dossier
                 </button>
+                <button
+                  onClick={() => downloadPdf(selectedInspection.scan_id || selectedInspection.id)}
+                  className="px-4 py-2 text-xs font-semibold text-white bg-[#174A7E] hover:bg-[#133D68] rounded shadow-sm flex items-center gap-1.5"
+                >
+                  <Download size={14} /> Download Official PDF Report
+                </button>
               </div>
+
             </div>
           </div>
         )}
+
       </main>
+
+      <Footer />
     </div>
   );
 }

@@ -1,6 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
+
+@theme {
+  --color-gov-blue: #174A7E;
+  --color-gov-blue-hover: #133D68;
+  --color-gov-blue-light: #245A91;
+  --color-gov-navy: #183153;
+  --color-gov-border: #D5DCE5;
+  --color-gov-bg-light: #F5F7FA;
+  --color-gov-bg-subtle: #EDF2F7;
+
+  --color-primary: #174A7E;
+  --color-primary-hover: #133D68;
+  --color-secondary: #245A91;
+  --color-secondary-hover: #1C4570;
+
+  --color-success: #15803D;
+  --color-success-bg: #DCFCE7;
+  --color-success-border: #BBF7D0;
+
+  --color-warning: #B45309;
+  --color-warning-bg: #FEF3C7;
+  --color-warning-border: #FDE68A;
+
+  --color-error: #B91C1C;
+  --color-error-bg: #FEE2E2;
+  --color-error-border: #FECACA;
+
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
 
 body {
   margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #FFFFFF;
+  color: #183153;
   min-width: 320px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Accessible focus outline for government portal standards */
+:focus-visible {
+  outline: 2px solid #174A7E;
+  outline-offset: 2px;
 }

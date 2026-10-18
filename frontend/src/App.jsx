@@ -9,6 +9,7 @@ import UserDashboard from "./pages/user/Dashboard";
 import ScanProduct from "./pages/user/ScanProduct";
 import ScanHistory from "./pages/user/ScanHistory";
 import FileComplaint from "./pages/user/FileComplaint";
+import OCRReview from "./pages/user/OCRReview";
 
 import OfficerLogin from "./pages/officer/OfficerLogin";
 import OfficerDashboard from "./pages/officer/OfficerDashboard";
@@ -53,6 +54,14 @@ function App() {
           element={
             <ProtectedUserRoute>
               <ScanProduct />
+            </ProtectedUserRoute>
+          }
+        />
+        <Route
+          path="/user/review/:scanId"
+          element={
+            <ProtectedUserRoute>
+              <OCRReview />
             </ProtectedUserRoute>
           }
         />

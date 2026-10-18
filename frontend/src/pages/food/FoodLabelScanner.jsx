@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 import FSSAIChecklistReport from "./FSSAIChecklistReport";
 
 import API_BASE_URL from "../../config";
@@ -247,7 +248,7 @@ function FoodLabelScanner() {
     }, "image/jpeg", 0.95);
   };
 
-  const handleAnalyze = async () => {
+  const handleAnalyze = async (forceProceed = false) => {
     if (!selectedFile) {
       setErrorMsg("Please upload or capture a pre-packaged food label.");
       return;
@@ -278,6 +279,10 @@ function FoodLabelScanner() {
       const formData = new FormData();
       formData.append("image", selectedFile);
       formData.append("panel_type", "all");
+      
+      if (forceProceed) {
+          formData.append("force_proceed", "true");
+      }
 
       const response = await axios.post(`${API_BASE_URL}/food-label/analyze`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -286,7 +291,7 @@ function FoodLabelScanner() {
       const data = response.data;
 
       // Check if rejected by Image Quality Gate
-      if (data.status === "QUALITY_CHECK_FAILED" || !data.can_proceed_with_analysis) {
+      if (!forceProceed && (data.status === "QUALITY_CHECK_FAILED" || !data.can_proceed_with_analysis || data.needs_retake_prompt)) {
         setQualityRejection(data);
       } else {
         setAnalysisReport(data);
@@ -310,77 +315,71 @@ function FoodLabelScanner() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex flex-col">
+    <div className="min-h-screen bg-white text-[#183153] flex flex-col justify-between">
       <Navbar role="user" />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-2">
-            <span className="text-xs px-2.5 py-1 rounded font-bold uppercase tracking-wider bg-emerald-950 text-emerald-400 border border-emerald-800">
+            <span className="text-xs px-2.5 py-1 rounded font-bold uppercase tracking-wider bg-[#E8F0FE] text-[#174A7E] border border-[#B9D5F4]">
               Food Safety & Standards Authority of India (FSSAI)
             </span>
-            <span className="text-xs text-slate-400">Labelling & Display Regulations, 2020</span>
+            <span className="text-xs text-slate-500 font-medium">Labelling & Display Regulations, 2020</span>
           </div>
-          <h2 className="text-3xl font-black tracking-tight mt-2 flex items-center gap-3">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#183153] mt-2 flex items-center gap-3">
             <span>🥗</span> Indian Pre-Packaged Food Label Inspector
           </h2>
-          <p className="text-slate-400 text-sm mt-1 max-w-3xl">
+          <p className="text-slate-600 text-sm mt-1 max-w-3xl leading-relaxed">
             Point camera at the back or side of packaged foods (Biscuits, Dairy/Ghee, Namkeen, Snacks, Noodles, Beverages) to verify mandatory FSSAI statutory declarations, INS additives, allergens, and nutritional standards.
           </p>
         </div>
 
         {errorMsg && (
-          <div className="mb-6 p-4 rounded-2xl bg-red-950/60 border border-red-800 text-red-300 text-sm flex items-center justify-between">
+          <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm flex items-center justify-between shadow-sm">
             <span>⚠️ {errorMsg}</span>
-            <button onClick={() => setErrorMsg("")} className="text-red-400 hover:text-white">✕</button>
+            <button onClick={() => setErrorMsg("")} className="text-red-600 hover:text-red-800 font-bold">✕</button>
           </div>
         )}
 
         {/* QUALITY REJECTION NOTIFICATION */}
         {qualityRejection && (
-          <div className="mb-8 p-6 rounded-3xl bg-rose-950/40 border border-rose-500/50 shadow-xl">
+          <div className="mb-8 p-6 rounded-2xl bg-amber-50 border border-amber-300 shadow-sm">
             <div className="flex items-start gap-4">
-              <div className="text-4xl">📸</div>
-              <div>
-                <span className="text-xs font-bold uppercase tracking-widest text-rose-400">
-                  Image Quality Gate: Insufficient Resolution
+              <div className="text-3xl">📸</div>
+              <div className="w-full">
+                <span className="text-xs font-bold uppercase tracking-widest text-amber-800">
+                  Image Quality Warning
                 </span>
-                <h3 className="text-xl font-bold text-white mt-1">
-                  Please retake the photo
+                <h3 className="text-lg font-bold text-amber-950 mt-1">
+                  The image is blurry or poorly lit
                 </h3>
-                <p className="text-xs text-slate-300 mt-1">
-                  Compliance evaluation was paused because label text cannot be reliably read without false violations:
+                <p className="text-amber-800 text-sm mt-1 max-w-xl">
+                  {qualityRejection.image_quality_warning || "OCR accuracy may be reduced. It is highly recommended to retake the photo under better lighting."}
                 </p>
 
-                <ul className="mt-3 space-y-1 text-xs text-rose-200">
-                  {qualityRejection.reasons?.map((reason, idx) => (
-                    <li key={idx} className="flex items-center gap-2">
-                      <span>•</span> {reason}
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="mt-4 p-3 bg-slate-900/80 rounded-xl border border-slate-800 text-xs text-slate-300">
-                  <span className="font-bold text-cyan-400 block mb-1">💡 Tips for a successful capture:</span>
-                  {qualityRejection.retake_guidance?.map((tip, idx) => (
-                    <span key={idx} className="block text-slate-400">• {tip}</span>
-                  ))}
-                </div>
-
-                <div className="mt-4 flex gap-3">
+                <div className="mt-5 flex items-center gap-3">
                   <button
                     onClick={() => {
                       setQualityRejection(null);
                       startCamera();
                     }}
-                    className="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2 rounded-xl text-xs font-bold shadow-lg"
+                    className="bg-amber-600 hover:bg-amber-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-sm transition flex items-center gap-2"
                   >
-                    Open Camera with Real-time Guide
+                    <span>📷</span> Open Camera to Retake
+                  </button>
+                  <button
+                    onClick={() => {
+                        setQualityRejection(null);
+                        handleAnalyze(true);
+                    }}
+                    className="bg-white hover:bg-amber-100 border border-amber-400 text-amber-900 px-4 py-2.5 rounded-xl font-bold text-sm transition"
+                  >
+                    Continue Anyway
                   </button>
                   <button
                     onClick={() => setQualityRejection(null)}
-                    className="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-xl text-xs"
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-4 py-2.5 rounded-xl font-bold text-sm transition"
                   >
                     Dismiss
                   </button>
@@ -395,83 +394,83 @@ function FoodLabelScanner() {
           <div className="grid lg:grid-cols-12 gap-8">
             {/* Left Col: Camera & Photo Upload */}
             <div className="lg:col-span-6 flex flex-col gap-6">
-              <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl">
-                <h3 className="text-lg font-bold text-white mb-4 flex items-center justify-between">
+              <div className="bg-white border border-[#D5DCE5] rounded-2xl p-6 shadow-sm">
+                <h3 className="text-base font-bold text-[#183153] mb-4 flex items-center justify-between">
                   <span>1. Capture or Upload Back/Side Label</span>
                   {previewUrl && (
-                    <span className="text-xs px-2.5 py-0.5 rounded bg-blue-900/60 text-blue-300 border border-blue-700 font-mono">
+                    <span className="text-xs px-2.5 py-0.5 rounded bg-[#E8F0FE] text-[#174A7E] border border-[#B9D5F4] font-medium font-mono">
                       Image Ready
                     </span>
                   )}
                 </h3>
 
                 {isCameraActive ? (
-                  <div className="relative rounded-2xl overflow-hidden bg-black aspect-[4/3] flex flex-col items-center justify-center border border-slate-700 shadow-2xl">
+                  <div className="relative rounded-2xl overflow-hidden bg-black aspect-[4/3] flex flex-col items-center justify-center border border-slate-300 shadow-md">
                     <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
 
                     {/* Camera Guidance Overlay */}
                     <div className="absolute top-4 inset-x-4 flex justify-center">
                       <div
-                        className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-lg backdrop-blur flex items-center gap-2 border ${
+                        className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wide shadow-md backdrop-blur flex items-center gap-2 border ${
                           guidanceStatus === "READY"
-                            ? "bg-emerald-950/90 text-emerald-300 border-emerald-500"
+                            ? "bg-white/95 text-green-800 border-green-500"
                             : guidanceStatus === "GLARE"
-                            ? "bg-amber-950/90 text-amber-300 border-amber-500"
-                            : "bg-slate-900/90 text-slate-200 border-slate-700"
+                            ? "bg-white/95 text-amber-800 border-amber-500"
+                            : "bg-white/95 text-slate-800 border-slate-300"
                         }`}
                       >
-                        <span className="w-2 h-2 rounded-full animate-ping bg-cyan-400" />
+                        <span className="w-2 h-2 rounded-full animate-ping bg-[#174A7E]" />
                         {cameraGuidance}
                       </div>
                     </div>
 
                     {/* Alignment Reticle */}
-                    <div className="absolute inset-8 border-2 border-dashed border-white/30 rounded-2xl pointer-events-none" />
+                    <div className="absolute inset-8 border-2 border-dashed border-white/60 rounded-2xl pointer-events-none" />
 
                     {/* Bottom Camera Controls */}
                     <div className="absolute bottom-4 flex gap-3">
                       <button
                         onClick={capturePhoto}
-                        className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-xl shadow-emerald-600/30 flex items-center gap-2 transition"
+                        className="bg-[#174A7E] hover:bg-[#133D68] text-white px-6 py-2.5 rounded-xl font-bold text-sm shadow-md flex items-center gap-2 transition"
                       >
                         <span>📸</span> Capture Label
                       </button>
                       <button
                         onClick={stopCamera}
-                        className="bg-slate-800/90 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-xs font-semibold backdrop-blur"
+                        className="bg-slate-800/90 hover:bg-slate-700 text-white px-4 py-2.5 rounded-xl text-xs font-semibold backdrop-blur"
                       >
                         Cancel
                       </button>
                     </div>
                   </div>
                 ) : previewUrl ? (
-                  <div className="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 flex items-center justify-center p-3 group">
+                  <div className="relative rounded-2xl overflow-hidden bg-[#F5F7FA] border border-[#D5DCE5] flex items-center justify-center p-3 group min-h-[300px]">
                     <img
                       src={previewUrl}
                       alt="Food label preview"
-                      className="max-h-[380px] w-auto object-contain rounded-xl shadow-md"
+                      className="max-h-[380px] w-auto object-contain rounded-xl shadow-sm border border-[#D5DCE5]"
                     />
 
                     {isAnalyzing && (
-                      <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
-                        <div className="animate-spin text-4xl mb-4">⚙️</div>
-                        <h4 className="font-bold text-white text-base">Analyzing Food Package</h4>
-                        <p className="text-xs text-cyan-300 mt-2 max-w-sm font-medium">{analysisStage}</p>
+                      <div className="absolute inset-0 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center p-6 text-center">
+                        <div className="animate-spin text-4xl mb-4 text-[#174A7E]">⚙️</div>
+                        <h4 className="font-bold text-[#183153] text-base">Analyzing Food Package</h4>
+                        <p className="text-xs text-[#174A7E] mt-2 max-w-sm font-semibold">{analysisStage}</p>
                       </div>
                     )}
                   </div>
                 ) : (
                   <div
                     onClick={() => fileInputRef.current?.click()}
-                    className="border-2 border-dashed border-slate-700 hover:border-emerald-500 rounded-3xl p-10 flex flex-col items-center justify-center cursor-pointer transition bg-slate-950/50 hover:bg-slate-900/50 min-h-[280px]"
+                    className="border-2 border-dashed border-[#D5DCE5] hover:border-[#174A7E] rounded-2xl p-10 flex flex-col items-center justify-center cursor-pointer transition bg-[#F5F7FA] hover:bg-white min-h-[280px]"
                   >
-                    <div className="w-14 h-14 rounded-2xl bg-slate-900 flex items-center justify-center text-3xl mb-3 border border-slate-800">
+                    <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-3xl mb-3 border border-[#D5DCE5] shadow-sm">
                       🥗
                     </div>
-                    <p className="font-bold text-slate-200 text-sm text-center">
+                    <p className="font-bold text-[#183153] text-sm text-center">
                       Point camera or drop photo of food packaging
                     </p>
-                    <p className="text-xs text-slate-400 mt-1 text-center">
+                    <p className="text-xs text-slate-500 mt-1 text-center">
                       Supports ingredients panel, nutrition table, FSSAI logo, dates
                     </p>
                   </div>
@@ -489,7 +488,7 @@ function FoodLabelScanner() {
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold py-3 px-4 rounded-xl border border-slate-700 transition flex items-center justify-center gap-2"
+                    className="bg-white hover:bg-[#F5F7FA] text-[#183153] text-xs font-bold py-3 px-4 rounded-xl border border-[#D5DCE5] transition flex items-center justify-center gap-2 shadow-sm"
                   >
                     <span>📂</span> Upload Photo
                   </button>
@@ -498,7 +497,7 @@ function FoodLabelScanner() {
                     <button
                       type="button"
                       onClick={startCamera}
-                      className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold py-3 px-4 rounded-xl border border-slate-700 transition flex items-center justify-center gap-2"
+                      className="bg-white hover:bg-[#F5F7FA] text-[#183153] text-xs font-bold py-3 px-4 rounded-xl border border-[#D5DCE5] transition flex items-center justify-center gap-2 shadow-sm"
                     >
                       <span>📷</span> Open Live Camera
                     </button>
@@ -506,7 +505,7 @@ function FoodLabelScanner() {
                     <button
                       type="button"
                       onClick={stopCamera}
-                      className="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold py-3 px-4 rounded-xl border border-slate-700"
+                      className="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-3 px-4 rounded-xl border border-slate-300"
                     >
                       Close Camera
                     </button>
@@ -517,7 +516,7 @@ function FoodLabelScanner() {
                   type="button"
                   disabled={!selectedFile || isAnalyzing}
                   onClick={handleAnalyze}
-                  className="mt-4 w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-500 text-white py-3.5 rounded-xl font-bold transition shadow-lg shadow-emerald-600/20 text-sm flex items-center justify-center gap-2"
+                  className="mt-4 w-full bg-[#174A7E] hover:bg-[#133D68] disabled:bg-slate-100 disabled:text-slate-400 text-white py-3.5 rounded-xl font-bold transition shadow-sm text-sm flex items-center justify-center gap-2 cursor-pointer disabled:cursor-not-allowed"
                 >
                   {isAnalyzing ? (
                     <span>Evaluating FSSAI Requirements...</span>
@@ -532,13 +531,13 @@ function FoodLabelScanner() {
 
             {/* Right Col: Instant Sample Presets & Food Categories */}
             <div className="lg:col-span-6 flex flex-col gap-6">
-              <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl">
+              <div className="bg-white border border-[#D5DCE5] rounded-2xl p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <h3 className="text-base font-bold text-[#183153] flex items-center gap-2">
                       <span>⚡</span> Quick Sample Presets (1-Click Test)
                     </h3>
-                    <p className="text-xs text-slate-400 mt-0.5">
+                    <p className="text-xs text-slate-600 mt-0.5">
                       Select real Indian pre-packaged food labels to test the complete pipeline instantly:
                     </p>
                   </div>
@@ -549,21 +548,21 @@ function FoodLabelScanner() {
                     <div
                       key={sample.id}
                       onClick={() => handleLoadSample(sample)}
-                      className="p-4 rounded-2xl bg-slate-950 border border-slate-800/80 hover:border-emerald-500/60 cursor-pointer transition flex items-center justify-between group"
+                      className="p-4 rounded-xl bg-[#F5F7FA] border border-[#D5DCE5] hover:border-[#174A7E] cursor-pointer transition flex items-center justify-between group"
                     >
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-bold text-sm text-slate-200 group-hover:text-emerald-400 transition">
+                          <span className="font-bold text-sm text-[#183153] group-hover:text-[#174A7E] transition">
                             {sample.name}
                           </span>
-                          <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">
+                          <span className="text-[10px] px-2 py-0.5 rounded bg-white text-slate-600 border border-[#D5DCE5] font-mono">
                             {sample.category}
                           </span>
                         </div>
-                        <p className="text-xs text-slate-400 mt-1 line-clamp-1">{sample.desc}</p>
+                        <p className="text-xs text-slate-500 mt-1 line-clamp-1">{sample.desc}</p>
                       </div>
 
-                      <button className="bg-slate-800 group-hover:bg-emerald-600 text-slate-200 group-hover:text-white px-3 py-1.5 rounded-xl text-xs font-bold transition shrink-0">
+                      <button className="bg-white group-hover:bg-[#174A7E] text-[#183153] group-hover:text-white border border-[#D5DCE5] group-hover:border-[#174A7E] px-3 py-1.5 rounded-lg text-xs font-bold transition shrink-0 ml-3">
                         Load Sample →
                       </button>
                     </div>
@@ -572,25 +571,25 @@ function FoodLabelScanner() {
               </div>
 
               {/* Regulatory Scope Information */}
-              <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
+              <div className="bg-[#F5F7FA] border border-[#D5DCE5] rounded-2xl p-6">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#183153] mb-3">
                   Audited Food Categories & Key FSSAI Checks
                 </h4>
-                <div className="grid grid-cols-2 gap-2 text-xs text-slate-300">
-                  <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800/60">
-                    <span className="font-bold text-emerald-400 block">Dairy & Ghee:</span>
+                <div className="grid grid-cols-2 gap-2.5 text-xs text-slate-700">
+                  <div className="p-3 bg-white rounded-xl border border-[#D5DCE5]">
+                    <span className="font-bold text-[#174A7E] block mb-0.5">Dairy & Ghee:</span>
                     <span>Milk fat min 99.7%, Agmark grade, Fortification +F</span>
                   </div>
-                  <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800/60">
-                    <span className="font-bold text-emerald-400 block">Biscuits & Bakery:</span>
+                  <div className="p-3 bg-white rounded-xl border border-[#D5DCE5]">
+                    <span className="font-bold text-[#174A7E] block mb-0.5">Biscuits & Bakery:</span>
                     <span>QUID %, INS additives, Allergen declarations</span>
                   </div>
-                  <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800/60">
-                    <span className="font-bold text-emerald-400 block">Snacks & Namkeen:</span>
+                  <div className="p-3 bg-white rounded-xl border border-[#D5DCE5]">
+                    <span className="font-bold text-[#174A7E] block mb-0.5">Snacks & Namkeen:</span>
                     <span>Saturated fat, Trans fat & Sodium per 100g</span>
                   </div>
-                  <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800/60">
-                    <span className="font-bold text-emerald-400 block">Beverages:</span>
+                  <div className="p-3 bg-white rounded-xl border border-[#D5DCE5]">
+                    <span className="font-bold text-[#174A7E] block mb-0.5">Beverages:</span>
                     <span>Added sugars declaration & fruit content %</span>
                   </div>
                 </div>
@@ -602,6 +601,8 @@ function FoodLabelScanner() {
           <FSSAIChecklistReport reportData={analysisReport} onReset={handleReset} />
         )}
       </main>
+
+      <Footer />
     </div>
   );
 }

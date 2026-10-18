@@ -40,6 +40,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 def analyze_scan(
     file: Optional[UploadFile] = File(None),
     image: Optional[UploadFile] = File(None),
+    force_proceed: bool = False,
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user_optional)
 ):
@@ -93,17 +94,21 @@ def analyze_scan(
 
     # 2. Run Quality, OCR, Extraction, Confidence, and Compliance Engine
     try:
-        result = analyze_product(file_path)
+        result = analyze_product(file_path, force_proceed=force_proceed)
 
         # 3. Persist Extracted Fields with confidence
         fields_data = result.get("fields", {})
         confidences_data = result.get("confidences", {})
+        field_statuses = result.get("field_statuses", {})
 
         for f_name, raw_val in fields_data.items():
             val_str = str(raw_val["value"]) if isinstance(raw_val, dict) and "value" in raw_val else str(raw_val)
-            conf_val = 0.90
-            if f_name in confidences_data:
-                conf_val = confidences_data[f_name].get("confidence", 0.90)
+            # Use actual confidence, not hardcoded 0.92
+            conf_entry = confidences_data.get(f_name, {})
+            if isinstance(conf_entry, dict):
+                conf_val = conf_entry.get("confidence", 0.80)
+            else:
+                conf_val = float(conf_entry) if conf_entry else 0.80
 
             ef = ExtractedField(
                 scan_id=scan.id,
@@ -154,39 +159,54 @@ def analyze_scan(
             detail=f"Analysis failed: {str(e)}"
         )
 
-    # Format extracted_fields dictionary with .value and .confidence for direct frontend compatibility
+    # Build compat extracted_fields dict (no hardcoded 0.92 fallback)
     compat_extracted_fields = {}
     for k, v in fields_data.items():
         val = v.get("value") if isinstance(v, dict) and "value" in v else v
-        conf = confidences_data.get(k, {}).get("confidence", 0.92) if isinstance(confidences_data.get(k), dict) else 0.92
+        conf_entry = confidences_data.get(k, {})
+        conf = conf_entry.get("confidence", 0.80) if isinstance(conf_entry, dict) else 0.80
+        fs = field_statuses.get(k, "NOT_DETECTED")
         compat_extracted_fields[k] = {
-            "value": val,
-            "confidence": conf
+            "value":      val,
+            "confidence": conf,
+            "status":     fs,
         }
 
     return {
-        "message": "Scan analyzed successfully",
-        "scan_id": scan.id,
-        "status": scan.status,
-        "score": scan.score,
-        "compliance_score": scan.score,
-        "summary": f"Compliance status: {scan.status} with {violation_count} violation(s) flagged across {rules_checked} statutory rules.",
-        "rules_checked": rules_checked,
-        "quality": result.get("quality"),
-        "ocr_text": result.get("ocr_text"),
-        "fields": result.get("fields", {}),
-        "extracted_fields": compat_extracted_fields,
-        "confidences": result.get("confidences", {}),
-        "violations": result.get("violations", []),
-        "violation_count": violation_count,
+        "message":              "Scan analyzed successfully",
+        "scan_id":              scan.id,
+        "status":               scan.status,
+        "score":                scan.score,
+        "compliance_score":     scan.score,
+        "summary":              f"Compliance status: {scan.status} with {violation_count} violation(s) flagged across {rules_checked} statutory rules.",
+        "rules_checked":        rules_checked,
+        # v1 compat
+        "quality":              result.get("quality"),
+        "ocr_text":             result.get("ocr_text"),
+        "fields":               result.get("fields", {}),
+        "extracted_fields":     compat_extracted_fields,
+        "confidences":          result.get("confidences", {}),
+        "violations":           result.get("violations", []),
+        "violation_count":      violation_count,
         "compliance": {
-            "status": scan.status,
-            "score": scan.score,
-            "violations": result.get("violations", []),
-            "rules_checked": rules_checked
+            "status":           scan.status,
+            "score":            scan.score,
+            "violations":       result.get("violations", []),
+            "rules_checked":    rules_checked
         },
-        "image_url": f"/uploads/{filename}"
+        "image_url":            f"/uploads/{filename}",
+        # v2 additions
+        "quality_tier":         result.get("quality_tier", "GOOD"),
+        "quality_summary":      result.get("quality"),
+        "needs_retake_prompt":  result.get("needs_retake_prompt", False),
+        "image_quality_warning":result.get("image_quality_warning"),
+        "field_statuses":       field_statuses,
+        "is_food_product":      result.get("is_food_product", False),
+        "timing":               result.get("timing", {}),
     }
+
+
+
 
 
 @router.get("/")

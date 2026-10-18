@@ -1,0 +1,75 @@
+[
+  {
+    "id": "sample_product_label",
+    "filename": "sample_product_label.jpg",
+    "description": "Packaged Organic Atta with 7 visible statutory declarations",
+    "quality_tier": "GOOD",
+    "expected_fields": {
+      "product_name": "ORGANIC WHOLE WHEAT ATTA",
+      "mrp": "120.00",
+      "net_quantity": "500 g",
+      "manufacturing_date": "15/08/2024",
+      "expiry_date": null,
+      "best_before": "9 Months",
+      "fssai": "10012345678901",
+      "manufacturer": "ABC Foods Ltd",
+      "consumer_care": null
+    },
+    "reference_transcription": "ORGANIC WHOLE WHEAT ATTA\n\nMRP Rs 120.00\n\nNet Quantity: 500 g\n\nMfd: 15/08/2024\nBest Before: 9 Months\nFSSAI Lic No. 10012345678901\n\nManufactured by: ABC Foods Ltd"
+  },
+  {
+    "id": "compliant_package",
+    "filename": "test_compliant_package.jpg",
+    "description": "Packaged Whole Wheat Atta with full Legal Metrology and FSSAI declarations",
+    "quality_tier": "GOOD",
+    "expected_fields": {
+      "product_name": "PREMIUM ORGANIC WHOLE WHEAT ATTA",
+      "mrp": "295.00",
+      "net_quantity": "5 kg",
+      "manufacturing_date": "15/08/2026",
+      "expiry_date": null,
+      "best_before": "6 MONTHS FROM PACKAGING",
+      "fssai": "10019022009876",
+      "manufacturer": "Mitra Agro Foods Pvt. Ltd.",
+      "manufacturer_address": "Plot 42, Industrial Area, New Delhi - 110020",
+      "consumer_care": "1800-123-4567"
+    },
+    "reference_transcription": "PREMIUM ORGANIC WHOLE WHEAT ATTA\n\nNET QUANTITY: 5 kg\n\nMAXIMUM RETAIL PRICE (MRP): Rs 295.00\n\n(INCLUSIVE OF ALL TAXES)\n\nMFD: 15/08/2026\n\nBEST BEFORE: 6 MONTHS FROM PACKAGING\n\nMANUFACTURED BY: Mitra Agro Foods Pvt. Ltd.\n\nADDRESS: Plot 42, Industrial Area, New Delhi - 110020\n\nCONSUMER CARE: 1800-123-4567\n\nFSSAILIC NO: 10019022009876"
+  },
+  {
+    "id": "packaged_atta_sample",
+    "filename": "packaged_atta_sample.jpg",
+    "description": "Patanjali Organic Atta 10 kg with printed retail and statutory declarations",
+    "quality_tier": "GOOD",
+    "expected_fields": {
+      "product_name": "PATANJALI ORGANIC ATTA",
+      "mrp": "450.00",
+      "net_quantity": "10 kg",
+      "manufacturing_date": "12/01/2025",
+      "expiry_date": null,
+      "best_before": "9 Months from Packaging",
+      "fssai": "10014012000268",
+      "manufacturer": "Patanjali Foods Ltd",
+      "consumer_care": "1800-180-4108"
+    },
+    "reference_transcription": "PATANJALI ORGANIC ATTA\n\nNet Quantity: 10 kg\n\nMRP: Rs 450.00 (Incl. of all taxes)\n\nMfg Date: 12/01/2025\n\nBest Before: 9 Months from Packaging\n\nManufactured by: Patanjali Foods Ltd\n\nAddress: Haridwar, Uttarakhand 249401\n\nConsumer Care: feedback@patanjali.org | 1800-180-4108\n\nFSSAI Lic No: 10014012000268"
+  },
+  {
+    "id": "blurry_package",
+    "filename": "test_blurry_atta.jpg",
+    "description": "Severely blurred and overexposed package image for quality degradation testing",
+    "quality_tier": "VERY_POOR",
+    "expected_fields": {
+      "product_name": "PREMIUM ORGANIC WHOLE WHEAT ATTA",
+      "mrp": "295.00",
+      "net_quantity": "5 kg",
+      "manufacturing_date": "15/08/2026",
+      "expiry_date": null,
+      "best_before": "6 MONTHS FROM PACKAGING",
+      "fssai": "10019022009876",
+      "manufacturer": "Mitra Agro Foods Pvt. Ltd.",
+      "consumer_care": "1800-123-4567"
+    },
+    "reference_transcription": "PREMIUM ORGANIC WHOLE WHEAT ATTA\nNET QUANTITY: 5 kg\nMAXIMUM RETAIL PRICE (MRP): Rs 295.00\n(INCLUSIVE OF ALL TAXES)\nMFD: 15/08/2026\nBEST BEFORE: 6 MONTHS FROM PACKAGING\nMANUFACTURED BY: Mitra Agro Foods Pvt. Ltd.\nADDRESS: Plot 42, Industrial Area, Phase II, New Delhi - 110020\nCONSUMER CARE: 1800-123-4567 | support@mitraagro.in\nFSSAI LIC NO: 10019022009876"
+  }
+]
