@@ -15,13 +15,25 @@ import os
 import time
 from pathlib import Path
 
-ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
-if ROOT_DIR not in sys.path:
-    sys.path.append(ROOT_DIR)
+# Setup import paths supporting local dev and Docker container layouts
+candidate_roots = [
+    Path(__file__).resolve().parent.parent.parent.parent,  # repo root in local dev
+    Path(__file__).resolve().parent.parent.parent,         # /app in container
+    Path(__file__).resolve().parent.parent,
+    Path("/app"),
+]
 
-RULES_DIR = os.path.join(ROOT_DIR, "rules")
-if RULES_DIR not in sys.path:
-    sys.path.append(RULES_DIR)
+for root in candidate_roots:
+    ai_dir = root / "ai_engine"
+    rules_dir = root / "rules"
+    if ai_dir.is_dir():
+        if str(ai_dir) not in sys.path:
+            sys.path.insert(0, str(ai_dir))
+        if str(root) not in sys.path:
+            sys.path.insert(0, str(root))
+    if rules_dir.is_dir():
+        if str(rules_dir) not in sys.path:
+            sys.path.insert(0, str(rules_dir))
 
 from ai_engine.image_quality import check_image_quality
 from ai_engine.preprocessing import generate_preprocessing_variants

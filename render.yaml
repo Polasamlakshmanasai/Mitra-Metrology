@@ -20,6 +20,8 @@ services:
 
     plan: free
 
+    healthCheckPath: /
+
     envVars:
       # Render automatically generates a secure value
       - key: SECRET_KEY

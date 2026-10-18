@@ -27,3 +27,12 @@ uploads/
 # OS
 .DS_Store
 Thumbs.db
+
+# Android build & cache
+.gradle/
+android/.gradle/
+**/build/
+android/build/
+*.apk
+*.aab
+local.properties

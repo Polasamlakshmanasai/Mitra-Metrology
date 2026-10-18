@@ -4,9 +4,20 @@ import logging
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
-if PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, PROJECT_ROOT)
+# Setup sys.path for local dev, tests, and Docker container layouts
+candidate_roots = [
+    Path(__file__).resolve().parent.parent.parent,  # repo root in local dev
+    Path(__file__).resolve().parent.parent,         # /app in container
+    Path("/app"),
+]
+
+for root in candidate_roots:
+    ai_dir = root / "ai_engine"
+    rules_dir = root / "rules"
+    if ai_dir.is_dir() and str(root) not in sys.path:
+        sys.path.insert(0, str(root))
+    if rules_dir.is_dir() and str(rules_dir) not in sys.path:
+        sys.path.insert(0, str(rules_dir))
 
 BACKEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if BACKEND_DIR not in sys.path:
